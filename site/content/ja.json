@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "title": "poteto-skills: Cursor プラグインの Skills を Claude Code と Codex で",
+    "description": "Cursor 公式プラグイン集 cursor/plugins の Skills を、Claude Code と Codex で読み込める形式に変換した配布物です。pstack 0.15.46 を含みます。",
+    "og": {
+      "title": "pstack for Codex | poteto-skills",
+      "description": "cursor/plugins の Skills を Claude Code と Codex 向けに変換した配布物です。"
+    }
+  },
+  "header": {
+    "wordmark": "POTETO-SKILLS",
+    "languageSwitchLabel": "English",
+    "githubLabel": "GitHub"
+  },
+  "hero": {
+    "overline": "CURSOR PLUGINS → CLAUDE CODE & CODEX",
+    "heading": "pstack for Codex",
+    "lead": "Cursor 公式プラグイン集 cursor/plugins の Skills を、pstack を含めて Claude Code と Codex で読み込める形式に変換しました。",
+    "ctaLabel": "GitHub で見る"
+  },
+  "numbers": [
+    { "value": "110", "label": "Skills" },
+    { "value": "2", "label": "対応ホスト" },
+    { "value": "22", "label": "Codex プラグイン" },
+    { "value": "0.15.46", "label": "pstack" }
+  ],
+  "install": {
+    "heading": "インストール",
+    "intro": "リポジトリを取得してインストーラを実行します。既定では、両ホスト向けの全 Skills をユーザー単位でインストールします。",
+    "commands": [
+      "git clone https://github.com/takurot/poteto-skills.git",
+      "cd poteto-skills",
+      "./install.sh"
+    ],
+    "optionNotes": [
+      "--target claude または --target codex を付けると、一方のホストだけにインストールします。",
+      "--scope project --project-dir /path/to/project を付けると、ユーザー単位ではなくプロジェクトにインストールします。",
+      "--skill <name> を Skill ごとに付けると、選んだ Skills だけをインストールします。名前は ./install.sh --list で確認できます。",
+      "既定のセットは本番利用できる 109 Skills です。実験的な docs-canvas は一覧に出ますが、明示的に選ばない限りインストールしません。"
+    ]
+  },
+  "codex": {
+    "heading": "Codex プラグイン",
+    "intro": "Codex 用 Skills は、upstream の Cursor プラグインごとに 1 つ、計 22 の Codex プラグインとしても配布しています。install.sh の代わりに使えます。同じ Skill を両方の方法でインストールしないでください。",
+    "commands": [
+      "codex plugin marketplace add takurot/poteto-skills",
+      "codex plugin list",
+      "codex plugin add pstack@poteto-skills"
+    ],
+    "plugins": [
+      "advisor",
+      "agent-compatibility",
+      "cli-for-agent",
+      "continual-learning",
+      "create-plugin",
+      "cursor-sdk",
+      "cursor-team-kit",
+      "dyl-stack",
+      "google-docs",
+      "google-drive",
+      "google-sheets",
+      "google-slides",
+      "grok-voice",
+      "orchestrate",
+      "origin-apps",
+      "pstack",
+      "ralph-loop",
+      "tailscale",
+      "teaching",
+      "thermos",
+      "x",
+      "x-money"
+    ],
+    "codexHooksNote": "別配布の codex-hooks プラグインは、Codex ネイティブの Stop フックを追加します。Python 3 が必要で、使う前にフックのスクリプトを確認して信頼設定をします。"
+  },
+  "converts": {
+    "heading": "変換の方針",
+    "rows": [
+      { "from": "name, description", "to": "各ホストが対応する形式へ正規化" },
+      { "from": "disable-model-invocation", "to": "Claude Code ではそのまま保持。Codex では agents/openai.yaml の allow_implicit_invocation: false に変換" },
+      { "from": "icon, color, mode, reminder, paths", "to": "未対応の項目として除去" },
+      { "from": "Skill 内の scripts、references、assets", "to": "保持" },
+      { "from": "Cursor 専用の agent 定義", "to": "references/cursor-agents/ に同梱" },
+      { "from": ".cursor/skills/ への参照", "to": "Claude Code は .claude/skills/、Codex は .agents/skills/ または ~/.codex/skills/ へ変換" }
+    ]
+  },
+  "boundaries": {
+    "heading": "互換性の境界",
+    "items": [
+      "通常のインストールでは、Cursor のフックを使う処理は手動の代替手段で動きます。任意の codex-hooks プラグインが、その一部を Codex に移植します。",
+      "MCP を使う Skills は、対応する MCP サーバーを Claude Code または Codex 側で別途設定する必要があります。",
+      "Cursor SDK や Cursor Cloud Agents を操作する Skills は、引き続き Cursor の認証情報とサービスを必要とします。",
+      "名前付きの Cursor サブエージェントは自動登録しません。元の定義は references/cursor-agents/ に同梱しています。",
+      "Cursor Canvas を使う Skills は、Canvas を使えない場合に単体の HTML 成果物へフォールバックします。"
+    ]
+  },
+  "pullQuote": "Skill の文章やローカルの資源は変換できますが、Cursor 固有のランタイムそのものは同梱していません。",
+  "footer": {
+    "license": "インストーラ、変換スクリプト、ドキュメントは MIT ライセンスです。変換済み Skills は upstream の MIT ライセンスを引き継ぎます。",
+    "credits": "Skills は pstack を含む cursor/plugins から変換しています。",
+    "copyrightHolders": "変換済み Skills の著作権表示は Cursor、Lauren Tan、または Anysphere, Inc. に帰属します。",
+    "githubLabel": "GitHub"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "message": "このアドレスにはページがありません。",
+    "linkLabel": "トップページへ"
+  }
+}

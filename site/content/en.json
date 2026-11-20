@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "title": "poteto-skills: Cursor plugin Skills for Claude Code and Codex",
+    "description": "Skills from the official cursor/plugins collection, converted into formats that Claude Code and Codex can load. Includes pstack 0.15.46.",
+    "og": {
+      "title": "pstack for Codex | poteto-skills",
+      "description": "Skills from the official cursor/plugins collection, converted for Claude Code and Codex."
+    }
+  },
+  "header": {
+    "wordmark": "POTETO-SKILLS",
+    "languageSwitchLabel": "日本語",
+    "githubLabel": "GitHub"
+  },
+  "hero": {
+    "overline": "CURSOR PLUGINS → CLAUDE CODE & CODEX",
+    "heading": "pstack for Codex",
+    "lead": "Skills from the official cursor/plugins collection, including pstack, converted into formats that Claude Code and Codex can load.",
+    "ctaLabel": "View on GitHub"
+  },
+  "numbers": [
+    { "value": "110", "label": "Skills" },
+    { "value": "2", "label": "Hosts" },
+    { "value": "22", "label": "Codex plugins" },
+    { "value": "0.15.46", "label": "pstack" }
+  ],
+  "install": {
+    "heading": "Install",
+    "intro": "Clone the repository and run the installer. By default it installs all Skills for both hosts at the user level.",
+    "commands": [
+      "git clone https://github.com/takurot/poteto-skills.git",
+      "cd poteto-skills",
+      "./install.sh"
+    ],
+    "optionNotes": [
+      "Add --target claude or --target codex to install for one host only.",
+      "Add --scope project --project-dir /path/to/project to install into a project instead of your user directory.",
+      "Add --skill <name>, once per Skill, to install selected Skills. ./install.sh --list shows the names.",
+      "The default set installs 109 production-ready Skills. The experimental docs-canvas Skill is listed but not installed unless you select it."
+    ]
+  },
+  "codex": {
+    "heading": "Codex plugins",
+    "intro": "The Codex Skills are also packaged as 22 Codex plugins, one per upstream Cursor plugin. They are an alternative to install.sh. Do not install the same Skill both ways.",
+    "commands": [
+      "codex plugin marketplace add takurot/poteto-skills",
+      "codex plugin list",
+      "codex plugin add pstack@poteto-skills"
+    ],
+    "plugins": [
+      "advisor",
+      "agent-compatibility",
+      "cli-for-agent",
+      "continual-learning",
+      "create-plugin",
+      "cursor-sdk",
+      "cursor-team-kit",
+      "dyl-stack",
+      "google-docs",
+      "google-drive",
+      "google-sheets",
+      "google-slides",
+      "grok-voice",
+      "orchestrate",
+      "origin-apps",
+      "pstack",
+      "ralph-loop",
+      "tailscale",
+      "teaching",
+      "thermos",
+      "x",
+      "x-money"
+    ],
+    "codexHooksNote": "The separate codex-hooks plugin adds native Codex Stop hooks. It requires Python 3, and you review and trust its hook scripts before use."
+  },
+  "converts": {
+    "heading": "How it converts",
+    "rows": [
+      { "from": "name, description", "to": "Normalized to the format each host supports" },
+      { "from": "disable-model-invocation", "to": "Preserved for Claude Code. For Codex, converted to allow_implicit_invocation: false in agents/openai.yaml" },
+      { "from": "icon, color, mode, reminder, paths", "to": "Removed as unsupported fields" },
+      { "from": "Skill scripts, references, and assets", "to": "Preserved" },
+      { "from": "Cursor-specific agent definitions", "to": "Bundled under references/cursor-agents/" },
+      { "from": "References to .cursor/skills/", "to": "Converted to .claude/skills/ for Claude Code and to .agents/skills/ or ~/.codex/skills/ for Codex" }
+    ]
+  },
+  "boundaries": {
+    "heading": "Compatibility boundaries",
+    "items": [
+      "Ordinary installs use manual fallbacks for Cursor hook workflows. The optional codex-hooks plugin ports some of them to Codex.",
+      "Skills that use MCP need the corresponding MCP server configured separately in Claude Code or Codex.",
+      "Skills that operate the Cursor SDK or Cursor Cloud Agents still require Cursor credentials and services.",
+      "Named Cursor subagents are not registered automatically. Their definitions are bundled under references/cursor-agents/.",
+      "Skills that use Cursor Canvas fall back to a standalone HTML artifact when Canvas is unavailable."
+    ]
+  },
+  "pullQuote": "Skill instructions and local resources can be converted, but Cursor-specific runtime capabilities are not bundled.",
+  "footer": {
+    "license": "The installer, converter, and documentation are MIT licensed. Converted Skills keep their upstream MIT licenses.",
+    "credits": "Skills are converted from cursor/plugins, including pstack.",
+    "copyrightHolders": "Copyright notices for converted Skills belong to Cursor, Lauren Tan, or Anysphere, Inc.",
+    "githubLabel": "GitHub"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "There is no page at this address.",
+    "linkLabel": "Go to the home page"
+  }
+}
