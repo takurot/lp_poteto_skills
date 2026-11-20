@@ -5,10 +5,14 @@
   "description": "Landing page for poteto-skills",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "^22.22.0 || >=24.8.0"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test \"tests/build/**/*.test.mjs\""
+    "test": "node --test \"tests/build/**/*.test.mjs\"",
+    "validate": "html-validate \"build/**/*.html\""
+  },
+  "devDependencies": {
+    "html-validate": "^11.21.1"
   }
 }
