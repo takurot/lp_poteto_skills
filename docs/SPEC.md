@@ -37,7 +37,7 @@ README（2026-11-20 時点）から取る。数値はハードコードし、更
 | # | セクション | 内容 | 主要要素 |
 |---|---|---|---|
 | 0 | Header | ワードマーク「POTETO-SKILLS」、言語切替、GitHub リンク | Ghost ボタン |
-| 1 | Hero | Overline「CURSOR PLUGINS → CLAUDE CODE & CODEX」、見出し（例: "Cursor's skills. Your agent."）、1 文のリード、CTA | Display 見出し、Primary ボタン（GitHub） |
+| 1 | Hero | Overline「CURSOR PLUGINS → CLAUDE CODE & CODEX」、見出し `pstack for Codex`（決定済み。英日とも同じ）、1 文のリード、CTA | Display 見出し、Primary ボタン（GitHub） |
 | 2 | Numbers | 110 Skills / 2 Hosts / 22 Codex plugins / pstack 0.15.46 | 4 列（モバイルでは 2×2）の罫線グリッド |
 | 3 | Install | `git clone` → `./install.sh`。`--target`、`--scope project`、`--skill` の例 | コードブロック（Space Mono） |
 | 4 | Codex plugins | `codex plugin marketplace add takurot/poteto-skills` ほか 3 コマンドと、22 プラグイン名の一覧 | コードブロック、Filter Chip 風の静的ラベル |
@@ -164,7 +164,7 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
 - ビルドは GitHub Actions で行い、`actions/setup-node`（Node 22）で `scripts/build.mjs` を実行してから `wrangler deploy` する。Cloudflare 側のビルド環境は使わない（ビルド環境の差異を避け、テストを通した成果物だけをデプロイするため）。このプロジェクトには `wrangler.jsonc` があるため、デプロイ操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
 - 認証は `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を GitHub Secrets に置く。権限は Workers Scripts: Edit から始め、デプロイが権限不足で失敗したら必要な権限（Account Settings: Read など）を足して記録する。リポジトリに秘密情報は置かない。
 - `main` への push で本番にデプロイする。PR では `wrangler versions upload` でバージョンを作る。プレビュー URL は `workers_dev` の設定に従い、本番の設定を使う点に注意する。PR コメントの投稿には `permissions: pull-requests: write` が必要。フォークからの PR にはシークレットが渡らないため、プレビューは同一リポジトリのブランチからの PR だけに限る。
-- ドメインは、まず `poteto-skills.<account>.workers.dev` で公開する。独自ドメインは未決（§11）。
+- ドメインは、まず `poteto-skills.<account>.workers.dev` で公開する。独自ドメインは使わない（決定済み）。
 - ロールバックは `wrangler rollback` を使う。静的アセットも前のバージョンに戻るかは未検証のため、Phase 3 で実際に確認して記録する。
 - 404 ページ: `not_found_handling: "404-page"` は最も近い `404.html` を探す。`scripts/build.mjs` が `build/404.html` を直接出力する（`404/index.html` にはしない）。
 
@@ -195,7 +195,7 @@ CSS のハッシュ付け（`style.<hash>.css`）は任意とする。ファイ�
 | F1 | `/` に英語版、`/ja/` に日本語版を表示する。`<html lang>` を正しく設定する |
 | F2 | 両ページに `hreflang` の相互リンクと canonical を置く。URL は絶対 URL にする。ベース URL は環境変数 `SITE_URL`（初期値は `https://poteto-skills.<account>.workers.dev`）からビルド時に差し込む（`scripts/build.mjs`） |
 | F3 | GitHub CTA は `https://github.com/takurot/poteto-skills` へリンクする |
-| F4 | インストールコマンドはテキストとして選択、コピーできる。コピーボタンは任意（JS を入れる場合は外部ファイル 1 つ、1KB 未満、JS なしでも機能を損なわない） |
+| F4 | インストールコマンドはテキストとして選択、コピーできる。各コマンドにコピーボタンを付ける（決定済み）。JS は外部ファイル 1 つ（`/copy.js`）、1KB 未満、`script-src 'self'` の範囲で動かす。JS が無効でもコマンドは選択・コピーでき、その場合ボタンは表示しない（`hidden` 属性を JS で外す） |
 | F5 | 404 ページを VoiceBox のスタイルで用意する |
 | F6 | OGP / Twitter Card（タイトル、説明、`og:url`、`og:image`）を設定する。`og:url` と `og:image` は絶対 URL（F2 の `SITE_URL`） |
 | F7 | 外部ドメインへのリクエスト（フォント含む）、外部 JS、解析タグ、Cookie は使わない |
@@ -228,7 +228,7 @@ TDD の対象はビルドの出力物である。先にテストを書き、出�
 
 ## 9. 運用
 
-- 数値の更新: §8 の定期照合が README との差分を検知したら Issue を立てる。`site/content/*.md` を直して再デプロイする。
+- 数値の更新: §8 の定期照合が README との差分を検知したら Issue を立てる。`site/content/*.json` を直して再デプロイする。
 - 生成系の更新: 依存がないため、Node の LTS 更新に追従するだけでよい。
 - ロールバック: `wrangler rollback` で直前のバージョンに戻す（§5.4 のとおり、静的アセットの復元は Phase 3 で確認する）。
 
@@ -242,11 +242,13 @@ TDD の対象はビルドの出力物である。先にテストを書き、出�
 | 3 | Cloudflare 設定、`_headers`、GitHub Actions、PR プレビュー、ロールバックの確認 | workers.dev で公開され、Lighthouse CI が通る。`wrangler rollback` で静的アセットも戻ることを確認して記録する |
 | 4 | 仕上げ: OGP 画像、404、文言の推敲 | 全受け入れ基準（§6〜§8）を満たす |
 
-## 11. 未決事項
+## 11. 決定事項
 
-1. 独自ドメインを使うか（使う場合はドメイン名と、Cloudflare のゾーンがあるか）。
-2. Hero の見出しコピーの最終案。
-3. コード行のコピーボタン（F4）を入れるか。
+未決事項はない。
+
+1. 独自ドメインは使わない。Cloudflare が割り当てる `poteto-skills.<account>.workers.dev` で公開する（#22）。
+2. Hero の見出しは `pstack for Codex`（#23）。ただし README は Claude Code と Codex の両方を対象にしているため、Overline とリード文で Claude Code にも対応することを明記し、見出しだけで対象を Codex に限定しない。
+3. コピーボタンを入れる（#24）。`copy.js` を追加し、`site/static/` に置く。
 
 ## 12. 確認状況
 
