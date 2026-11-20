@@ -49,6 +49,7 @@
   },
   "converts": {
     "heading": "Fixture converts JA",
+    "columns": { "from": "Fixture column from JA", "to": "Fixture column to JA" },
     "rows": [
       { "from": "Fixture from one JA", "to": "Fixture to one JA" },
       { "from": "Fixture from two JA", "to": "Fixture to two JA" }

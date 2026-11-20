@@ -30,6 +30,7 @@ export const schema = obj({
   }),
   converts: obj({
     heading: str(),
+    columns: obj({ from: str(), to: str() }),
     rows: arr(obj({ from: str(), to: str() }), { min: 1, max: 6 }),
   }),
   boundaries: obj({ heading: str(), items: arr(str(), { min: 4, max: 5 }) }),

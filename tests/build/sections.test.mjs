@@ -127,6 +127,46 @@ describe("page sections (SPEC §3)", () => {
         assert.doesNotMatch(html, /\son[a-z]+=/i, "no inline event handlers");
       });
 
+      test("5 How it converts: a ruled table with column headers and one row per policy", () => {
+        const converts = section(html, "converts");
+        assert.deepEqual(textOf(converts, "h2"), [content.converts.heading]);
+        const table = innerOf(converts, "table", (attrs) => classes(attrs).includes("rules"));
+        assert.deepEqual(
+          tags(table, "th").filter((attrs) => attrs.scope === "col").length,
+          2,
+        );
+        assert.deepEqual(textOf(innerOf(table, "thead"), "th"), [content.converts.columns.from, content.converts.columns.to]);
+        const rows = [...innerOf(table, "tbody").matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map(([, row]) => ({
+          from: textOf(row, "th")[0],
+          to: textOf(row, "td")[0],
+        }));
+        assert.deepEqual(rows, content.converts.rows);
+      });
+
+      test("6 Boundaries: the constraints as a default list", () => {
+        const boundaries = section(html, "boundaries");
+        assert.deepEqual(textOf(boundaries, "h2"), [content.boundaries.heading]);
+        assert.deepEqual(textOf(innerOf(boundaries, "ul", (attrs) => classes(attrs).includes("list")), "li"), content.boundaries.items);
+      });
+
+      test("7 Pull quote: one blockquote with the red-border class, after the sections, inside main", () => {
+        const main = innerOf(html, "main");
+        assert.deepEqual(
+          tags(main, "blockquote").map(classes),
+          [["pull-quote"]],
+        );
+        assert.deepEqual(textOf(main, "blockquote"), [content.pullQuote]);
+        assert.ok(main.indexOf("<blockquote") > main.indexOf('id="boundaries"'), "after Boundaries, far from the hero underline");
+      });
+
+      test("8 Footer: license, credits, copyright holders as captions and a GitHub Ghost link", () => {
+        const footer = innerOf(html, "footer");
+        assert.deepEqual(textOf(footer, "p"), [content.footer.license, content.footer.credits, content.footer.copyrightHolders]);
+        assert.equal(withClass(footer, "p", "caption").length, 3);
+        assert.deepEqual(anchors(footer), [{ href: GITHUB_URL, text: content.footer.githubLabel }]);
+        assert.ok(withClass(footer, "a", "btn-ghost").length === 1);
+      });
+
       test("2 Numbers: a headed section with the four values as a ruled list", () => {
         const numbers = section(html, "numbers");
         assert.deepEqual(textOf(numbers, "h2"), [content.numbers.heading]);
