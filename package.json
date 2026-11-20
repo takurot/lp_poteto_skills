@@ -9,6 +9,6 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/build/"
+    "test": "node --test"
   }
 }
