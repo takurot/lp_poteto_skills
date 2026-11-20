@@ -14,7 +14,7 @@ Claude Code / Codex は、以下の6ステージで作業する。
 - コンテンツは `site/content/{en,ja}.json`、テンプレートは `site/templates/` の純関数、出力は `build/`（コミットしない）。
 - 補間はすべて `esc()` を通す。生HTMLを埋め込む場所を作らない。出力は決定的にする（現在時刻・乱数を使わない）。
 - デザインは VoiceBox（角丸0、`box-shadow: none`、アクセント赤は静止状態で1ビューポートに1要素以下）。規則はテストで検査する。
-- このリポジトリには `wrangler.jsonc` があるため、Cloudflare の操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
+- SPEC §5.4 のとおり `wrangler.jsonc` を置くため、Cloudflare の操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
 
 ## 作業の共通ルール
 
