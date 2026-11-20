@@ -2,7 +2,17 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { after, before, describe, test } from "node:test";
-import { TEST_SITE_URL, buildOrThrow, hashTree, makeTempDir, readFixtureContent, readOut, runBuild } from "./helpers/build.mjs";
+import {
+  TEST_SITE_URL,
+  buildOrThrow,
+  hashTree,
+  makeTempDir,
+  readFixtureContent,
+  readOut,
+  repoRoot,
+  runBuild,
+  writeContentDir,
+} from "./helpers/build.mjs";
 import { anchors, linksByRel, metaContent, tags, textOf } from "./helpers/html.mjs";
 
 const GITHUB_URL = "https://github.com/takurot/poteto-skills";
@@ -111,7 +121,7 @@ describe("built locale pages", () => {
   });
 });
 
-describe("SITE_URL normalization", () => {
+describe("build configuration", () => {
   test("a trailing slash in SITE_URL does not produce a double slash", (t) => {
     const outDir = makeTempDir(t.after.bind(t));
     buildOrThrow({ outDir, siteUrl: `${TEST_SITE_URL}/` });
@@ -120,6 +130,45 @@ describe("SITE_URL normalization", () => {
       linksByRel(html, "canonical").map((attrs) => attrs.href),
       [`${TEST_SITE_URL}/ja/`],
     );
+  });
+
+  test("an OUT_DIR that would delete a build input fails the build", (t) => {
+    const workDir = makeTempDir(t.after.bind(t));
+    const contentDir = writeContentDir(path.join(workDir, "content"), { en: readFixtureContent("en"), ja: readFixtureContent("ja") });
+    const before = hashTree(workDir);
+    const result = runBuild({ contentDir, outDir: workDir });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /OUT_DIR/);
+    assert.deepEqual(hashTree(workDir), before, "content directory left intact");
+  });
+
+  test("an OUT_DIR inside the repository but outside build/ and temp/ fails the build", (t) => {
+    const outDir = path.join(repoRoot, "site", "out-dir-guard-probe");
+    t.after(() => fs.rmSync(outDir, { recursive: true, force: true }));
+    const result = runBuild({ outDir });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /OUT_DIR/);
+    assert.ok(!fs.existsSync(outDir), "output directory was created");
+  });
+
+  test("an OUT_DIR inside STATIC_DIR fails the build", (t) => {
+    const workDir = makeTempDir(t.after.bind(t));
+    const staticDir = path.join(workDir, "static");
+    fs.mkdirSync(staticDir);
+    fs.writeFileSync(path.join(staticDir, "robots.txt"), "User-agent: *\n");
+    const outDir = path.join(staticDir, "out");
+    const result = runBuild({ outDir, staticDir });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /OUT_DIR/);
+    assert.ok(!fs.existsSync(outDir), "output directory was created");
+  });
+
+  test("a missing STATIC_DIR fails with a readable message, not a stack trace", (t) => {
+    const workDir = makeTempDir(t.after.bind(t));
+    const result = runBuild({ outDir: path.join(workDir, "out"), staticDir: path.join(workDir, "no-such-static") });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /no-such-static/);
+    assert.doesNotMatch(result.stderr, /\n\s+at /);
   });
 
   test("a SITE_URL that is not an absolute http(s) URL fails the build", (t) => {
