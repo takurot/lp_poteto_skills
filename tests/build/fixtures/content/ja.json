@@ -9,6 +9,7 @@
   },
   "header": {
     "wordmark": "FIXTURE-WORDMARK",
+    "navLabel": "Fixture nav JA",
     "languageSwitchLabel": "Fixture English",
     "githubLabel": "Fixture GitHub JA"
   },
@@ -18,12 +19,15 @@
     "lead": "Fixture lead JA.",
     "ctaLabel": "Fixture CTA JA"
   },
-  "numbers": [
-    { "value": "1", "label": "Fixture number one JA" },
-    { "value": "2", "label": "Fixture number two JA" },
-    { "value": "3", "label": "Fixture number three JA" },
-    { "value": "4.0.0", "label": "Fixture number four JA" }
-  ],
+  "numbers": {
+    "heading": "Fixture numbers JA",
+    "items": [
+      { "value": "1", "label": "Fixture number one JA" },
+      { "value": "2", "label": "Fixture number two JA" },
+      { "value": "3", "label": "Fixture number three JA" },
+      { "value": "4.0.0", "label": "Fixture number four JA" }
+    ]
+  },
   "install": {
     "heading": "Fixture install JA",
     "intro": "Fixture install intro JA.",

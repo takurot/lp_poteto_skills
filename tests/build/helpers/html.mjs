@@ -37,6 +37,18 @@ export function anchors(html) {
   }));
 }
 
+// Inner markup of the first <name> start tag whose attributes satisfy `match`, up to the next </name>.
+// Only for elements that do not nest inside themselves (section, header, nav, ul, table).
+export function innerOf(html, name, match = () => true) {
+  const pattern = new RegExp(`<${name}(\\s[^>]*)?>([\\s\\S]*?)</${name}>`, "gi");
+  for (const [, attrText = "", inner] of html.matchAll(pattern)) {
+    if (match(tags(`<${name}${attrText}>`, name)[0])) return inner;
+  }
+  throw new Error(`no <${name}> matched`);
+}
+
+export const classes = (attrs) => (attrs.class ?? "").split(/\s+/).filter(Boolean);
+
 export function textOf(html, name) {
   const matches = [...html.matchAll(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)</${name}>`, "gi"))];
   return matches.map(([, inner]) => decode(inner.replace(/<[^>]*>/g, "")).trim());

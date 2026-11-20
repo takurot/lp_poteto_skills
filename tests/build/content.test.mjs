@@ -41,13 +41,23 @@ describe("site content", () => {
     for (const locale of LOCALES) {
       const content = readContent(SITE_CONTENT_DIR, locale);
       assert.deepEqual(
-        content.numbers.map((item) => item.value),
+        content.numbers.items.map((item) => item.value),
         ["110", "2", "22", "0.15.46"],
         `${locale} numbers`,
       );
       assert.equal(content.codex.plugins.length, 22, `${locale} lists 22 Codex plugins`);
       assert.ok(!content.codex.plugins.includes("codex-hooks"), "codex-hooks is not one of the 22");
       assert.equal(content.hero.heading, "pstack for Codex");
+    }
+  });
+
+  test("SPEC §11.2: the overline and the lead name both Claude Code and Codex", () => {
+    for (const locale of LOCALES) {
+      const { overline, lead } = readContent(SITE_CONTENT_DIR, locale).hero;
+      for (const text of [overline, lead]) {
+        assert.match(text, /claude code/i, `${locale}: ${text}`);
+        assert.match(text, /codex/i, `${locale}: ${text}`);
+      }
     }
   });
 

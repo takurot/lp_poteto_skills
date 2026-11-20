@@ -9,9 +9,9 @@ export const schema = obj({
     description: str(160),
     og: obj({ title: str(), description: str() }),
   }),
-  header: obj({ wordmark: str(), languageSwitchLabel: str(), githubLabel: str() }),
+  header: obj({ wordmark: str(), navLabel: str(), languageSwitchLabel: str(), githubLabel: str() }),
   hero: obj({ overline: str(), heading: str(), lead: str(), ctaLabel: str() }),
-  numbers: arr(obj({ value: str(), label: str() }), { min: 4, max: 4 }),
+  numbers: obj({ heading: str(), items: arr(obj({ value: str(), label: str() }), { min: 4, max: 4 }) }),
   install: obj({
     heading: str(),
     intro: str(),

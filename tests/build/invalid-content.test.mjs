@@ -46,9 +46,9 @@ const MUTATIONS = [
   {
     name: "a wrong type inside an array item",
     mutate: (contents) => {
-      contents.en.numbers[0].value = 110;
+      contents.en.numbers.items[0].value = 110;
     },
-    stderrPatterns: [/en\.json\b.*numbers\[0\]\.value.*string/],
+    stderrPatterns: [/en\.json\b.*numbers\.items\[0\]\.value.*string/],
   },
   {
     name: "a missing nested object",

@@ -9,6 +9,7 @@
   },
   "header": {
     "wordmark": "POTETO-SKILLS",
+    "navLabel": "Site",
     "languageSwitchLabel": "日本語",
     "githubLabel": "GitHub"
   },
@@ -18,12 +19,15 @@
     "lead": "Skills from the official cursor/plugins collection, including pstack, converted into formats that Claude Code and Codex can load.",
     "ctaLabel": "View on GitHub"
   },
-  "numbers": [
-    { "value": "110", "label": "Skills" },
-    { "value": "2", "label": "Hosts" },
-    { "value": "22", "label": "Codex plugins" },
-    { "value": "0.15.46", "label": "pstack" }
-  ],
+  "numbers": {
+    "heading": "At a glance",
+    "items": [
+      { "value": "110", "label": "Skills" },
+      { "value": "2", "label": "Hosts" },
+      { "value": "22", "label": "Codex plugins" },
+      { "value": "0.15.46", "label": "pstack" }
+    ]
+  },
   "install": {
     "heading": "Install",
     "intro": "Clone the repository and run the installer. By default it installs all Skills for both hosts at the user level.",
