@@ -25,6 +25,7 @@ function assertRejected({ contentDir, workDir, stderrPatterns }) {
     assert.match(result.stderr, pattern);
   }
   assert.deepEqual(hashTree(outDir), before, "existing build output is left untouched");
+  assert.ok(!fs.existsSync(`${outDir}.staging`), "staging directory was created");
 }
 
 const MUTATIONS = [
@@ -92,5 +93,6 @@ describe("G5: invalid content exits non-zero and writes nothing", () => {
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /footer/);
     assert.ok(!fs.existsSync(outDir), "output directory was created");
+    assert.ok(!fs.existsSync(`${outDir}.staging`), "staging directory was created");
   });
 });

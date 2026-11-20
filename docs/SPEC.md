@@ -93,12 +93,13 @@ Astryx は Phase 0 で不採用とした（詳細は [astryx-spike.md](./astryx-
 
 代わりに、**依存ゼロの Node スクリプト**で生成する。
 
-- 実行環境: Node 22 LTS。生成スクリプトは組み込みモジュール（`node:fs`、`node:path`）だけを使う。`package.json` の `dependencies` は空にし、`devDependencies` はテストと検証（`wrangler`、`@playwright/test`、`html-validate`、Lighthouse CI）だけにする。
+- 実行環境: Node 22 LTS の 22.22 以上（`package.json` の `engines` は `^22.22.0 || >=24.8.0`、`.nvmrc` は `22` で最新の 22.x を指す）。生成スクリプトは組み込みモジュール（`node:fs`、`node:path`）だけを使う。`package.json` の `dependencies` は空にし、`devDependencies` はテストと検証（`wrangler`、`@playwright/test`、`html-validate`、Lighthouse CI）だけにする。
 - 内容: `site/content/en.json` と `ja.json`。JSON なので数値と配列を使える。コマンド列は文字列の配列、プラグイン名の一覧も配列にする。両ファイルを `site/content/schema.mjs` の 1 つのスキーマ（`string`・`number`・`array`・`object` の宣言的な木）で検証する。
 - テンプレート: `site/templates/page.mjs` が `(content, locale, ctx) => string` を返す純関数（`ctx` は `{ siteUrl }`）。ページの一覧（locale、出力ファイル、パス）は `site/pages.mjs` の `PAGES` が唯一の定義で、canonical・hreflang・`og:url` はここから組み立てる。英語版と日本語版は同じテンプレートに別の `content` を渡すため、マークアップは重複しない。
 - エスケープ: テンプレート内の補間はすべて `esc()`（`& < > " '` を置換）を通す。生の HTML を埋め込む場所は作らない。
-- 出力は `build/` に書く。入力が同じなら出力は同じバイト列になる（現在時刻や乱数を使わない）。ビルドは 2 段で、`renderSite()` が全ファイルをメモリ上に作り、`writeSite()` だけが書き込む。`writeSite()` は隣の `build.staging/` に書いてから `build/` と入れ替えるため、それより前の失敗でも書き込み途中の失敗でも、既存の `build/` は残る。
-- `scripts/build.mjs` は環境変数 `CONTENT_DIR`、`STATIC_DIR`、`OUT_DIR`、`SITE_URL` を読む（未設定ならリポジトリの既定値）。テストはこれを使い、子プロセスとして一時ディレクトリにビルドする。`OUT_DIR` はリポジトリ内なら `build/` か `temp/` の下に限り、入力ディレクトリと重なってはならない（`writeSite()` が丸ごと置き換えるため）。
+- 出力は `build/` に書く。入力が同じなら出力は同じバイト列になる（現在時刻や乱数を使わない）。ビルドは 2 段で、`renderSite()` が全ファイルをメモリ上に作り、`writeSite()` だけが書き込む。`writeSite()` は隣の `build.staging/` に書き、`build/` を `build.previous/` へ退避し、`build.staging/` を `build/` へ rename してから `build.previous/` を消す。2 回目の rename が失敗したら退避した `build/` を戻す。そのため staging への書き込みまでの失敗では既存の `build/` は変更されず、入れ替えの失敗でも元の `build/` に戻る（rename 2 回の間にプロセスが落ちた場合は `build/` が無く `build.previous/` が残る）。
+- `scripts/build.mjs` は環境変数 `CONTENT_DIR`、`STATIC_DIR`、`OUT_DIR`、`SITE_URL` を読む（未設定ならリポジトリの既定値）。テストはこれを使い、子プロセスとして一時ディレクトリにビルドする。`OUT_DIR` はリポジトリ内なら `build/` そのものか `temp/` より下のディレクトリに限る（共有の作業領域である `temp/` 自体は不可）。入力ディレクトリと重なってもならない（`writeSite()` が丸ごと置き換えるため）。
+- `writeSite()` は出力に空のマーカーファイル `.build-output` を書き、`OUT_DIR`・`<OUT_DIR>.staging`・`<OUT_DIR>.previous` は、存在しない・空・マーカーありのいずれかでなければ消さずに非ゼロ終了する。リポジトリ外の `OUT_DIR` も同じ規則で守る。マーカー導入前の `build/` は一度だけ手で消す。デプロイ時に `.build-output` を配信対象から外すのは Phase 3 で扱う。
 
 ### 5.2 生成系の要件
 
@@ -166,7 +167,7 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
 }
 ```
 
-- ビルドは GitHub Actions で行い、`actions/setup-node`（Node 22）で `scripts/build.mjs` を実行してから `wrangler deploy` する。Cloudflare 側のビルド環境は使わない（ビルド環境の差異を避け、テストを通した成果物だけをデプロイするため）。このプロジェクトには `wrangler.jsonc` があるため、デプロイ操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
+- ビルドは GitHub Actions で行い、`actions/setup-node`（`.nvmrc` の Node 22、22.22 以上）で `scripts/build.mjs` を実行してから `wrangler deploy` する。Cloudflare 側のビルド環境は使わない（ビルド環境の差異を避け、テストを通した成果物だけをデプロイするため）。このプロジェクトには `wrangler.jsonc` があるため、デプロイ操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
 - 認証は `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を GitHub Secrets に置く。権限は Workers Scripts: Edit から始め、デプロイが権限不足で失敗したら必要な権限（Account Settings: Read など）を足して記録する。リポジトリに秘密情報は置かない。
 - `main` への push で本番にデプロイする。PR では `wrangler versions upload` でバージョンを作る。プレビュー URL は `workers_dev` の設定に従い、本番の設定を使う点に注意する。PR コメントの投稿には `permissions: pull-requests: write` が必要。フォークからの PR にはシークレットが渡らないため、プレビューは同一リポジトリのブランチからの PR だけに限る。
 - ドメインは、まず `poteto-skills.<account>.workers.dev` で公開する。独自ドメインは使わない（決定済み）。

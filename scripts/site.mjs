@@ -55,25 +55,50 @@ export function renderSite({ contents, siteUrl, staticDir }) {
     ...PAGES.map(({ locale, file }) => [file, renderPage(contents[locale], locale, { siteUrl })]),
     [NOT_FOUND_FILE, renderNotFound(contents)],
   ];
-  const generatedPaths = new Set(generated.map(([rel]) => rel));
+  // Lowercased because a case-insensitive filesystem (macOS, Windows) would merge JA/Index.html into ja/index.html.
+  const generatedPaths = new Set(generated.map(([rel]) => rel.toLowerCase()));
   const statics = readStatic(staticDir);
-  const collisions = statics.map(([rel]) => rel).filter((rel) => generatedPaths.has(rel));
+  const collisions = statics.map(([rel]) => rel).filter((rel) => generatedPaths.has(rel.toLowerCase()));
   if (collisions.length > 0) {
     throw new BuildInputError(`static files would overwrite generated pages: ${collisions.join(", ")}`);
   }
   return new Map([...generated, ...statics].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
 }
 
-// The only step that writes. Files go to a sibling staging dir first, so an I/O error mid-write
-// leaves the previous outDir in place; only the final swap touches it.
+// Written into every output tree so a later build knows the directory is its own to replace.
+export const OUTPUT_MARKER = ".build-output";
+
+// Removing a directory is allowed only when it is absent, empty, or carries OUTPUT_MARKER.
+function assertReplaceable(dir) {
+  const stat = fs.statSync(dir, { throwIfNoEntry: false });
+  if (!stat) return;
+  if (stat.isDirectory() && (fs.readdirSync(dir).length === 0 || fs.existsSync(path.join(dir, OUTPUT_MARKER)))) return;
+  throw new BuildInputError(
+    `refusing to replace OUT_DIR path ${dir}: it is not an empty directory and has no ${OUTPUT_MARKER} marker from a previous build. Remove it yourself or choose another OUT_DIR.`,
+  );
+}
+
+// The only step that writes. Files go to a sibling staging dir first, so a failure before the swap
+// leaves the previous outDir in place. The swap moves the old outDir aside, moves staging in, and
+// moves the old one back if that second rename fails.
 export function writeSite(files, outDir) {
   const staging = `${outDir}.staging`;
+  const previous = `${outDir}.previous`;
+  [outDir, staging, previous].forEach(assertReplaceable);
   fs.rmSync(staging, { recursive: true, force: true });
-  for (const [rel, data] of files) {
+  fs.rmSync(previous, { recursive: true, force: true });
+  for (const [rel, data] of [[OUTPUT_MARKER, ""], ...files]) {
     const target = path.join(staging, rel);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.writeFileSync(target, data);
   }
-  fs.rmSync(outDir, { recursive: true, force: true });
-  fs.renameSync(staging, outDir);
+  const hadPrevious = fs.existsSync(outDir);
+  if (hadPrevious) fs.renameSync(outDir, previous);
+  try {
+    fs.renameSync(staging, outDir);
+  } catch (error) {
+    if (hadPrevious) fs.renameSync(previous, outDir);
+    throw error;
+  }
+  fs.rmSync(previous, { recursive: true, force: true });
 }
