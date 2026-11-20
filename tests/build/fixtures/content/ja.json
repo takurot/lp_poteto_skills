@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "title": "Fixture title JA",
+    "description": "Fixture description JA.",
+    "og": {
+      "title": "Fixture OG title JA",
+      "description": "Fixture OG description JA."
+    }
+  },
+  "header": {
+    "wordmark": "FIXTURE-WORDMARK",
+    "languageSwitchLabel": "Fixture English",
+    "githubLabel": "Fixture GitHub JA"
+  },
+  "hero": {
+    "overline": "FIXTURE OVERLINE JA",
+    "heading": "Fixture heading JA",
+    "lead": "Fixture lead JA.",
+    "ctaLabel": "Fixture CTA JA"
+  },
+  "numbers": [
+    { "value": "1", "label": "Fixture number one JA" },
+    { "value": "2", "label": "Fixture number two JA" },
+    { "value": "3", "label": "Fixture number three JA" },
+    { "value": "4.0.0", "label": "Fixture number four JA" }
+  ],
+  "install": {
+    "heading": "Fixture install JA",
+    "intro": "Fixture install intro JA.",
+    "commands": ["fixture-install --one", "fixture-install --two"],
+    "optionNotes": ["Fixture option note one JA.", "Fixture option note two JA."]
+  },
+  "codex": {
+    "heading": "Fixture codex JA",
+    "intro": "Fixture codex intro JA.",
+    "commands": ["fixture-codex add", "fixture-codex list"],
+    "plugins": ["fixture-plugin-a", "fixture-plugin-b"],
+    "codexHooksNote": "Fixture hooks note JA."
+  },
+  "converts": {
+    "heading": "Fixture converts JA",
+    "rows": [
+      { "from": "Fixture from one JA", "to": "Fixture to one JA" },
+      { "from": "Fixture from two JA", "to": "Fixture to two JA" }
+    ]
+  },
+  "boundaries": {
+    "heading": "Fixture boundaries JA",
+    "items": ["Fixture boundary one JA.", "Fixture boundary two JA.", "Fixture boundary three JA.", "Fixture boundary four JA."]
+  },
+  "pullQuote": "Fixture pull quote JA.",
+  "footer": {
+    "license": "Fixture license JA.",
+    "credits": "Fixture credits JA.",
+    "copyrightHolders": "Fixture holders JA.",
+    "githubLabel": "Fixture footer GitHub JA"
+  },
+  "notFound": {
+    "title": "Fixture not found JA",
+    "message": "Fixture not found message JA.",
+    "linkLabel": "Fixture back home JA"
+  }
+}
