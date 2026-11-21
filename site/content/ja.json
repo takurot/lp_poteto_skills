@@ -1,10 +1,10 @@
 {
   "meta": {
-    "title": "poteto-skills: Cursor プラグインの Skills を Claude Code と Codex で",
-    "description": "Cursor 公式プラグイン集 cursor/plugins の Skills を、Claude Code と Codex で読み込める形式に変換した配布物です。pstack 0.15.46 を含みます。",
+    "title": "poteto-skills: Cursor プラグインの Skill を Claude Code と Codex で",
+    "description": "Cursor 公式プラグイン集 cursor/plugins の Skill を、Claude Code と Codex で読み込める形式に変換した配布物です。pstack 0.15.46 を含みます。",
     "og": {
       "title": "pstack for Codex | poteto-skills",
-      "description": "cursor/plugins の Skills を Claude Code と Codex 向けに変換した配布物です。",
+      "description": "cursor/plugins の Skill を Claude Code と Codex 向けに変換した配布物です。",
       "imageAlt": "POTETO-SKILLS のワードマーク、見出し「pstack for Codex」、一文「Skills for Claude Code & Codex」。"
     }
   },
@@ -17,7 +17,7 @@
   "hero": {
     "overline": "CURSOR PLUGINS → CLAUDE CODE & CODEX",
     "heading": "pstack for Codex",
-    "lead": "Cursor 公式プラグイン集 cursor/plugins の Skills を、pstack を含めて Claude Code と Codex で読み込める形式に変換しました。",
+    "lead": "Cursor 公式プラグイン集 cursor/plugins の Skill（pstack を含む）を、Claude Code と Codex で読み込める形式に変換した配布物です。",
     "ctaLabel": "GitHub で見る"
   },
   "numbers": {
@@ -35,7 +35,7 @@
   },
   "install": {
     "heading": "インストール",
-    "intro": "リポジトリを取得してインストーラを実行します。既定では、両ホスト向けの全 Skills をユーザー単位でインストールします。",
+    "intro": "リポジトリを取得してインストーラを実行します。既定では、両ホスト向けに本番利用できる Skill をユーザー単位でインストールします。",
     "commands": [
       "git clone https://github.com/takurot/poteto-skills.git",
       "cd poteto-skills",
@@ -44,14 +44,14 @@
     "examples": [
       { "label": "一方のホストだけにインストールします。--target claude または --target codex を指定します。", "command": "./install.sh --target codex" },
       { "label": "ユーザー単位ではなく、プロジェクトにインストールします。", "command": "./install.sh --target both --scope project --project-dir /path/to/project" },
-      { "label": "Skill の名前を一覧します。", "command": "./install.sh --list" },
-      { "label": "選んだ Skills だけをインストールします。--skill は Skill ごとに繰り返します。", "command": "./install.sh --target codex --skill thermos --skill tdd" }
+      { "label": "Skill 名の一覧を表示します。", "command": "./install.sh --list" },
+      { "label": "選んだ Skill だけをインストールします。--skill は Skill ごとに繰り返します。", "command": "./install.sh --target codex --skill thermos --skill tdd" }
     ],
-    "defaultSetNote": "既定のセットは本番利用できる 109 Skills です。実験的な docs-canvas は一覧に出ますが、明示的に選ばない限りインストールしません。"
+    "defaultSetNote": "既定のセットは本番利用できる 109 個の Skill です。実験的な docs-canvas は一覧に出ますが、--skill docs-canvas で明示的に選ばない限りインストールしません。"
   },
   "codex": {
     "heading": "Codex プラグイン",
-    "intro": "Codex 用 Skills は、upstream の Cursor プラグインごとに 1 つ、計 22 の Codex プラグインとしても配布しています。install.sh の代わりに使えます。同じ Skill を両方の方法でインストールしないでください。",
+    "intro": "Codex 用 Skill は、変換元の Cursor プラグインごとに 1 つ、計 22 の Codex プラグインとしても配布しています。install.sh の代わりに使えます。同じ Skill を両方の方法でインストールしないでください。",
     "commands": [
       "codex plugin marketplace add takurot/poteto-skills",
       "codex plugin list",
@@ -82,7 +82,7 @@
       "x",
       "x-money"
     ],
-    "codexHooksNote": "別配布の codex-hooks プラグインは、Codex ネイティブの Stop フックを追加します。Python 3 が必要で、使う前にフックのスクリプトを確認して信頼設定をします。"
+    "codexHooksNote": "別配布の codex-hooks プラグインは、Codex ネイティブの Stop フックを追加します。Python 3 が必要です。フックのスクリプトを確認して信頼設定をしたうえで、機能をセッションごとに有効にします。"
   },
   "converts": {
     "heading": "変換の方針",
@@ -99,18 +99,18 @@
   "boundaries": {
     "heading": "互換性の境界",
     "items": [
-      "通常のインストールでは、Cursor のフックを使う処理は手動の代替手段で動きます。任意の codex-hooks プラグインが、その一部を Codex に移植します。",
-      "MCP を使う Skills は、対応する MCP サーバーを Claude Code または Codex 側で別途設定する必要があります。",
-      "Cursor SDK や Cursor Cloud Agents を操作する Skills は、引き続き Cursor の認証情報とサービスを必要とします。",
+      "通常のインストールでは、Cursor のフックを使う処理は手動の代替手段で動きます。オプションの codex-hooks プラグインが、その一部を Codex に移植します。",
+      "MCP を使う Skill は、対応する MCP サーバーを Claude Code または Codex 側で別途設定する必要があります。",
+      "Cursor SDK や Cursor Cloud Agents を操作する Skill は、引き続き Cursor の認証情報とサービスを必要とします。",
       "名前付きの Cursor サブエージェントは自動登録しません。元の定義は references/cursor-agents/ に同梱しています。",
-      "Cursor Canvas を使う Skills は、Canvas を使えない場合に単体の HTML 成果物へフォールバックします。"
+      "Cursor Canvas を使う Skill には、Canvas を使えない場合に単体の HTML 成果物へフォールバックする手順を含めています。"
     ]
   },
-  "pullQuote": "Skill の文章やローカルの資源は変換できますが、Cursor 固有のランタイムそのものは同梱していません。",
+  "pullQuote": "Skill の文章やローカルのファイルは変換できますが、Cursor 固有のランタイム機能は同梱していません。",
   "footer": {
-    "license": "インストーラ、変換スクリプト、ドキュメントは MIT ライセンスです。変換済み Skills は upstream の MIT ライセンスを引き継ぎます。",
-    "credits": "Skills は pstack を含む cursor/plugins から変換しています。",
-    "copyrightHolders": "変換済み Skills の著作権表示は Cursor、Lauren Tan、または Anysphere, Inc. に帰属します。",
+    "license": "インストーラ、変換スクリプト、ドキュメントは MIT ライセンスです。変換済みの Skill は変換元の MIT ライセンスを引き継ぎます。",
+    "credits": "Skill は pstack を含む cursor/plugins から変換しています。",
+    "copyrightHolders": "変換済み Skill の著作権表示は Cursor、Lauren Tan、または Anysphere, Inc. に帰属します。",
     "githubLabel": "GitHub"
   },
   "notFound": {
