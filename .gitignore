@@ -3,6 +3,7 @@
 /build.previous/
 node_modules/
 .wrangler/
+.lighthouseci/
 .DS_Store
 .env
 .env.*

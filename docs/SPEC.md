@@ -230,7 +230,7 @@ TDD の対象はビルドの出力物である。先にテストを書き、出�
 | HTML 検証 | `html-validate` | 生成した出力でエラー 0 |
 | E2E | Playwright | 360px と 1280px で横スクロールなし、CTA のリンク先、言語切替、404、キーボードでのフォーカス移動 |
 | デザイン規則 | Playwright と CSS の検査 | 角丸 0、`box-shadow: none`（フォーカス時を除く）。静止状態で 1 ビューポートに赤い要素が 1 つ以下。`style.css` で `--c-accent` を参照するセレクタが許可リスト（Hero の下線、Pull quote、各ボタンのホバー／アクティブ状態）に収まっていること |
-| 品質 | Lighthouse CI | §7 の閾値 |
+| 品質 | Lighthouse CI（`lighthouserc.json`）、`scripts/check-size.mjs` | §7 の閾値。Lighthouse は `build/` を `staticDistDir` で配信し、`/` と `/ja/` をモバイル設定で各 3 回計測する。404 ページは対象外（SEO 監査が非 2xx のステータスを減点する設計で、404 は索引させないページのため。表示とデザイン規則は E2E で検査する）。サイズ検査は `build/` の全 `.html` と `.css` の gzip 合計で、1 ページの転送量より厳しい |
 | README 照合 | 定期実行（週 1 回の scheduled workflow） | §2 の数値を README と `marketplace.json` から取得して照合する。README の文面ではなく `marketplace.json` のプラグイン数（`codex-hooks` を除いて 22）や `skills/manifest.json` のような構造化データを優先して読む。差分は Issue として通知し、デプロイは止めない |
 
 デプロイの条件は、ビルド出力、HTML 検証、E2E、デザイン規則、Lighthouse CI の全テストが通ったときだけとする。README 照合は他リポジトリの変更でデプロイが止まらないよう、この条件に含めない。
