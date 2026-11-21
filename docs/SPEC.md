@@ -120,6 +120,7 @@ lp_poteto_skills/
 ├── docs/
 │   ├── SPEC.md
 │   ├── astryx-spike.md      # Phase 0 の結果
+│   ├── deploy.md            # GitHub Secrets・トークン権限・ローカルデプロイ
 │   └── voicebox-DESIGN.md
 ├── site/
 │   ├── content/
@@ -170,7 +171,7 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
 ```
 
 - ビルドは GitHub Actions で行い、`actions/setup-node`（`.nvmrc` の Node 22、22.22 以上）で `scripts/build.mjs` を実行してから `wrangler deploy` する。Cloudflare 側のビルド環境は使わない（ビルド環境の差異を避け、テストを通した成果物だけをデプロイするため）。このプロジェクトには `wrangler.jsonc` があるため、デプロイ操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
-- 認証は `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を GitHub Secrets に置く。権限は Workers Scripts: Edit から始め、デプロイが権限不足で失敗したら必要な権限（Account Settings: Read など）を足して記録する。リポジトリに秘密情報は置かない。
+- 認証は `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を GitHub Secrets に置く。権限は Workers Scripts: Edit から始め、デプロイが権限不足で失敗したら必要な権限（Account Settings: Read など）を足して記録する。リポジトリに秘密情報は置かない。設定手順は [deploy.md](./deploy.md)。シークレットが未設定の間、`deploy` と `preview` ジョブは警告とジョブサマリーを出して Cloudflare の手順を飛ばす（テストは常に実行する）。
 - `main` への push で本番にデプロイする。PR では `wrangler versions upload` でバージョンを作る。プレビュー URL は `workers_dev` の設定に従い、本番の設定を使う点に注意する。PR コメントの投稿には `permissions: pull-requests: write` が必要。フォークからの PR にはシークレットが渡らないため、プレビューは同一リポジトリのブランチからの PR だけに限る。
 - ドメインは、まず `poteto-skills.<account>.workers.dev` で公開する。独自ドメインは使わない（決定済み）。
 - ロールバックは `wrangler rollback` を使う。静的アセットも前のバージョンに戻るかは未検証のため、Phase 3 で実際に確認して記録する。
