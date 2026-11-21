@@ -26,34 +26,55 @@ function headLines(content, page, siteUrl) {
 function header(content, page) {
   const switchTargets = PAGES.filter((other) => other.locale !== page.locale);
   return [
-    "<header>",
-    `<a href="${esc(page.path)}">${esc(content.header.wordmark)}</a>`,
-    "<nav>",
+    '<header class="site-header">',
+    '<div class="wrap bar">',
+    `<a class="wordmark" href="${esc(page.path)}">${esc(content.header.wordmark)}</a>`,
+    `<nav class="nav" aria-label="${esc(content.header.navLabel)}">`,
     ...switchTargets.map(
       (other) =>
-        `<a href="${esc(other.path)}" hreflang="${esc(other.locale)}" lang="${esc(other.locale)}">${esc(content.header.languageSwitchLabel)}</a>`,
+        `<a class="btn btn-ghost" href="${esc(other.path)}" hreflang="${esc(other.locale)}" lang="${esc(other.locale)}">${esc(content.header.languageSwitchLabel)}</a>`,
     ),
-    `<a href="${esc(GITHUB_URL)}">${esc(content.header.githubLabel)}</a>`,
+    `<a class="btn btn-ghost" href="${esc(GITHUB_URL)}">${esc(content.header.githubLabel)}</a>`,
     "</nav>",
+    "</div>",
     "</header>",
   ];
 }
 
+function hero({ hero }) {
+  return [
+    '<section id="hero" class="hero" aria-labelledby="hero-title">',
+    '<div class="wrap">',
+    `<p class="overline">${esc(hero.overline)}</p>`,
+    `<h1 id="hero-title" class="hero-title">${esc(hero.heading)}</h1>`,
+    `<p class="lead">${esc(hero.lead)}</p>`,
+    `<a class="btn btn-primary" href="${esc(GITHUB_URL)}">${esc(hero.ctaLabel)}</a>`,
+    "</div>",
+    "</section>",
+  ];
+}
+
+function numbers({ numbers }) {
+  return [
+    '<section id="numbers" aria-labelledby="numbers-title">',
+    '<div class="wrap">',
+    `<h2 id="numbers-title" class="visually-hidden">${esc(numbers.heading)}</h2>`,
+    '<ul class="stats">',
+    ...numbers.items.map(
+      ({ value, label }) => `<li><strong class="stat-value">${esc(value)}</strong> <span class="stat-label">${esc(label)}</span></li>`,
+    ),
+    "</ul>",
+    "</div>",
+    "</section>",
+  ];
+}
+
 function sections(content) {
-  const { hero, numbers, install, codex, converts, boundaries, footer } = content;
+  const { install, codex, converts, boundaries, footer } = content;
   return [
     "<main>",
-    '<section id="hero">',
-    `<p>${esc(hero.overline)}</p>`,
-    `<h1>${esc(hero.heading)}</h1>`,
-    `<p>${esc(hero.lead)}</p>`,
-    `<a href="${esc(GITHUB_URL)}">${esc(hero.ctaLabel)}</a>`,
-    "</section>",
-    '<section id="numbers">',
-    "<ul>",
-    ...numbers.map(({ value, label }) => `<li><strong>${esc(value)}</strong> ${esc(label)}</li>`),
-    "</ul>",
-    "</section>",
+    ...hero(content),
+    ...numbers(content),
     '<section id="install">',
     `<h2>${esc(install.heading)}</h2>`,
     `<p>${esc(install.intro)}</p>`,
