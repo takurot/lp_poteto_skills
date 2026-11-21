@@ -1,8 +1,10 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "./build",
-      "url": ["http://localhost/", "http://localhost/ja/"],
+      "startServerCommand": "npx wrangler dev --ip 127.0.0.1 --port 8788",
+      "startServerReadyPattern": "Ready on",
+      "startServerReadyTimeout": 60000,
+      "url": ["http://127.0.0.1:8788/", "http://127.0.0.1:8788/ja/"],
       "numberOfRuns": 3
     },
     "assert": {
