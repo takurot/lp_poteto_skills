@@ -115,9 +115,23 @@ describe("built locale pages", () => {
     assertDocumentShell(html, "en");
     const en = readFixtureContent("en");
     assert.deepEqual(textOf(html, "title"), [en.notFound.title]);
-    const hrefs = tags(html, "a").map((attrs) => attrs.href);
-    assert.ok(hrefs.includes("/"), "links back to the English home page");
-    assert.ok(hrefs.includes("/ja/"), "links back to the Japanese home page");
+  });
+
+  test("F5: the 404 page has one h1, both languages' message, and a single Primary link home", () => {
+    const html = readOut(outDir, "404.html");
+    const [en, ja] = ["en", "ja"].map(readFixtureContent);
+    assert.deepEqual(textOf(html, "h1"), [en.notFound.title]);
+    assert.equal(tags(html, "main").length, 1);
+    const links = tags(html, "a");
+    assert.equal(links.length, 1, "exactly one link");
+    assert.equal(links[0].href, "/");
+    assert.ok(links[0].class.split(" ").includes("btn-primary"));
+    const [link] = anchors(html);
+    assert.ok(link.text.includes(en.notFound.linkLabel) && link.text.includes(ja.notFound.linkLabel), "the link is labelled in both languages");
+    const jaBlock = tags(html, "p").filter((attrs) => attrs.lang === "ja");
+    assert.equal(jaBlock.length, 1, "the Japanese message is marked lang=ja");
+    assert.ok(textOf(html, "p").some((text) => text.includes(ja.notFound.title) && text.includes(ja.notFound.message)));
+    assert.doesNotMatch(html, /<script/i, "the 404 page needs no script");
   });
 });
 
