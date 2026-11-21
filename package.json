@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
-    "html-validate": "^11.21.1"
+    "html-validate": "^11.21.1",
+    "wrangler": "^4.166.0"
   }
 }

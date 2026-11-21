@@ -67,6 +67,8 @@ export function renderSite({ contents, siteUrl, staticDir }) {
 
 // Written into every output tree so a later build knows the directory is its own to replace.
 export const OUTPUT_MARKER = ".build-output";
+// Wrangler reads this from the assets directory and skips the listed files when it uploads build/.
+const ASSETS_IGNORE = [".assetsignore", `${OUTPUT_MARKER}\n`];
 
 // Removing a directory is allowed only when it is absent, empty, or carries OUTPUT_MARKER.
 function assertReplaceable(dir) {
@@ -87,7 +89,7 @@ export function writeSite(files, outDir) {
   [outDir, staging, previous].forEach(assertReplaceable);
   fs.rmSync(staging, { recursive: true, force: true });
   fs.rmSync(previous, { recursive: true, force: true });
-  for (const [rel, data] of [[OUTPUT_MARKER, ""], ...files]) {
+  for (const [rel, data] of [[OUTPUT_MARKER, ""], ASSETS_IGNORE, ...files]) {
     const target = path.join(staging, rel);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.writeFileSync(target, data);

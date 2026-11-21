@@ -1,0 +1,13 @@
+// Workers Static Assets with no Worker script (SPEC §5.4). Run `npm run build` first; build/ is the upload.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "poteto-skills",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./build",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

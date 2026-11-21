@@ -13,14 +13,21 @@ test("static files are copied byte-for-byte, keeping subdirectories", (t) => {
   }
 });
 
-test("dotfiles in the static directory are not published; the only dotfile is the build marker", (t) => {
+test("dotfiles in the static directory are not published; the only dotfiles are the build marker and its upload ignore", (t) => {
   const outDir = makeTempDir(t.after.bind(t));
   buildOrThrow({ outDir });
   assert.ok(fs.existsSync(path.join(fixtureStaticDir, ".gitkeep")), "fixture has a dotfile");
   assert.deepEqual(
     listFiles(outDir).filter((rel) => rel.split("/").some((part) => part.startsWith("."))),
-    [".build-output"],
+    [".assetsignore", ".build-output"],
   );
+});
+
+test(".assetsignore keeps the build marker out of the Cloudflare asset upload", (t) => {
+  const outDir = makeTempDir(t.after.bind(t));
+  buildOrThrow({ outDir });
+  const ignored = fs.readFileSync(path.join(outDir, ".assetsignore"), "utf8").split("\n").filter(Boolean);
+  assert.deepEqual(ignored, [".build-output"]);
 });
 
 test("a static file that collides with a generated page fails the build and writes nothing", (t) => {
