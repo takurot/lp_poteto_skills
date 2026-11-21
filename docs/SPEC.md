@@ -99,7 +99,7 @@ Astryx は Phase 0 で不採用とした（詳細は [astryx-spike.md](./astryx-
 - エスケープ: テンプレート内の補間はすべて `esc()`（`& < > " '` を置換）を通す。生の HTML を埋め込む場所は作らない。
 - 出力は `build/` に書く。入力が同じなら出力は同じバイト列になる（現在時刻や乱数を使わない）。ビルドは 2 段で、`renderSite()` が全ファイルをメモリ上に作り、`writeSite()` だけが書き込む。`writeSite()` は隣の `build.staging/` に書き、`build/` を `build.previous/` へ退避し、`build.staging/` を `build/` へ rename してから `build.previous/` を消す。2 回目の rename が失敗したら退避した `build/` を戻す。そのため staging への書き込みまでの失敗では既存の `build/` は変更されず、入れ替えの失敗でも元の `build/` に戻る（rename 2 回の間にプロセスが落ちた場合は `build/` が無く `build.previous/` が残る）。
 - `scripts/build.mjs` は環境変数 `CONTENT_DIR`、`STATIC_DIR`、`OUT_DIR`、`SITE_URL` を読む（未設定ならリポジトリの既定値）。テストはこれを使い、子プロセスとして一時ディレクトリにビルドする。`OUT_DIR` はリポジトリ内なら `build/` そのものか `temp/` より下のディレクトリに限る（共有の作業領域である `temp/` 自体は不可）。入力ディレクトリと重なってもならない（`writeSite()` が丸ごと置き換えるため）。
-- `writeSite()` は出力に空のマーカーファイル `.build-output` を書き、`OUT_DIR`・`<OUT_DIR>.staging`・`<OUT_DIR>.previous` は、存在しない・空・マーカーありのいずれかでなければ消さずに非ゼロ終了する。リポジトリ外の `OUT_DIR` も同じ規則で守る。マーカー導入前の `build/` は一度だけ手で消す。デプロイ時に `.build-output` を配信対象から外すのは Phase 3 で扱う。
+- `writeSite()` は出力に空のマーカーファイル `.build-output` を書き、`OUT_DIR`・`<OUT_DIR>.staging`・`<OUT_DIR>.previous` は、存在しない・空・マーカーありのいずれかでなければ消さずに非ゼロ終了する。リポジトリ外の `OUT_DIR` も同じ規則で守る。マーカー導入前の `build/` は一度だけ手で消す。`writeSite()` は同時に `.assetsignore`（中身は `.build-output` の 1 行）を書き、Wrangler がマーカーをアップロードしないようにする。`.assetsignore` がないと `wrangler dev` は `/.build-output` を 200 で返すことを確認した（2026-11-21）。
 
 ### 5.2 生成系の要件
 
@@ -182,12 +182,14 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 /*.css
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=3600
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 ```
 
-CSS のハッシュ付け（`style.<hash>.css`）は任意とする。ファイルが 1 つで小さいため、まずはハッシュなしで `max-age` を短くしてよい。ハッシュ付けをするなら `scripts/build.mjs` で行い、HTML 内の参照も同時に生成する。HTML は Cloudflare のデフォルト（再検証）に任せる。
+CSS のハッシュ付け（`style.<hash>.css`）は任意とする。ファイルが 1 つで小さいため、ハッシュなしの `style.css` に `max-age=3600` を付ける（`immutable` にすると更新後も古い CSS が最大 1 年残るため）。ハッシュ付けをするなら `scripts/build.mjs` で行い、HTML 内の参照も同時に生成する。HTML は Cloudflare のデフォルト（再検証）に任せる。
+
+ローカル確認: `npm run e2e` の `cloudflare` プロジェクトが `wrangler dev` で `build/` を配信し、`/`・`/ja/`・404 の CSP・nosniff・Referrer-Policy、CSP 違反とコンソールエラーが 0 件であること、フォントと CSS の Cache-Control、`/ja` → `/ja/` の 307、`.build-output`・`.assetsignore`・`_headers` が 404 になることを検査する。
 
 ### 5.5 不採用とした代替案
 
