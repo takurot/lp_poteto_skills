@@ -1,5 +1,8 @@
 import { esc } from "./escape.mjs";
 
+// SPEC §7: only the faces the first view renders. Fonts need crossorigin even from the same origin.
+const PRELOAD_FONTS = ["/fonts/archivo-black-latin-400-normal.woff2", "/fonts/work-sans-latin-400-normal.woff2"];
+
 // headLines and bodyLines are markup already built from esc()'d values.
 export function documentHtml({ lang, title, description, headLines = [], bodyLines }) {
   return [
@@ -11,6 +14,7 @@ export function documentHtml({ lang, title, description, headLines = [], bodyLin
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(description)}">`,
     ...headLines,
+    ...PRELOAD_FONTS.map((href) => `<link rel="preload" href="${esc(href)}" as="font" type="font/woff2" crossorigin>`),
     '<link rel="stylesheet" href="/style.css">',
     "</head>",
     "<body>",
