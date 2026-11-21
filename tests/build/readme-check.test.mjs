@@ -37,9 +37,40 @@ describe("upstreamFacts", () => {
     data.readme = data.readme.replace(/Skills for /g, "Skill files for ");
     const { problems } = upstreamFacts(data);
     assert.equal(problems.length, 3, problems.join("\n"));
-    assert.match(problems.join("\n"), /skill_count 111/);
+    assert.match(problems.join("\n"), /skill_count/);
     assert.match(problems.join("\n"), /pstack/);
     assert.match(problems.join("\n"), /host/);
+  });
+});
+
+describe("upstreamFacts reads hosts from the Contents section only", () => {
+  test('a capitalised "Skills for X" outside Contents is ignored', () => {
+    const data = upstream();
+    data.readme += "\n## Extra\n\nWe may add Skills for Cursor.\n";
+    assert.equal(upstreamFacts(data).facts.hosts, 2);
+  });
+
+  test("a Contents bullet with a parenthetical suffix still counts its host", () => {
+    const data = upstream();
+    data.readme = data.readme.replace("Skills for Codex, including", "Skills for Codex (with `agents/openai.yaml`), including");
+    assert.equal(upstreamFacts(data).facts.hosts, 2);
+  });
+});
+
+describe("upstream values are validated before they reach an issue", () => {
+  test("a plugin name or version with unexpected characters is a problem and its raw value is not echoed", () => {
+    const data = upstream();
+    data.marketplace.plugins.push({ name: "@someone ![x](https://evil.example/x.png)" });
+    data.manifest.skills.find((s) => s.plugin === "pstack").plugin_version = "0.15.46 @team";
+    const { problems } = upstreamFacts(data);
+    assert.equal(problems.length, 2, problems.join("\n"));
+    assert.ok(!problems.join("\n").includes("@"), problems.join("\n"));
+  });
+
+  test("a non-integer skill_count is a problem", () => {
+    const data = upstream();
+    data.manifest.skill_count = "110";
+    assert.match(upstreamFacts(data).problems.join("\n"), /skill_count/);
   });
 });
 
@@ -96,7 +127,22 @@ describe("compare", () => {
 test("issueBody lists every diff as a table row and is stable for the same diffs", () => {
   const diffs = [{ locale: "ja", field: "numbers.items[0] (Skills)", expected: "110", actual: "111" }];
   const body = issueBody(diffs, { upstreamRef: "abc123" });
-  assert.match(body, /\| ja \| numbers\.items\[0\] \(Skills\) \| 110 \| 111 \|/);
+  assert.match(body, /\| `ja` \| `numbers\.items\[0\] \(Skills\)` \| `110` \| `111` \|/);
   assert.match(body, /abc123/);
   assert.equal(body, issueBody(diffs, { upstreamRef: "abc123" }));
+});
+
+test("issueBody puts each cell in a code span, so mentions, links and control characters stay inert", () => {
+  const diffs = [{ locale: "en", field: "codex.intro", expected: "contains 22", actual: "ping @team #12 | x\r\ny`z" }];
+  const row = issueBody(diffs, { upstreamRef: "abc" }).split("\n").find((line) => line.startsWith("| `en`"));
+  assert.equal(row, "| `en` | `codex.intro` | `contains 22` | `ping @team #12 \\| x  y'z` |");
+});
+
+test("containsToken-style matching rejects 1,109 for 109", () => {
+  const shifted = contents();
+  shifted.en.install.defaultSetNote = shifted.en.install.defaultSetNote.replace("109", "1,109");
+  assert.deepEqual(
+    compare(upstream(), shifted).map((d) => `${d.locale} ${d.field}`),
+    ["en install.defaultSetNote"],
+  );
 });

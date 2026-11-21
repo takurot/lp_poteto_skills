@@ -22,29 +22,41 @@ const PROSE = [
 
 const factValue = (facts, fact) => String(typeof fact === "function" ? fact(facts) : facts[fact]);
 const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const containsToken = (text, token) => new RegExp(`(^|[^\\d.])${escapeRegExp(token)}(?![\\d.]*\\d)`).test(text);
+const containsToken = (text, token) => new RegExp(`(^|[^\\d.,])${escapeRegExp(token)}(?![\\d.,]*\\d)`).test(text);
 
-// Returns { facts, problems }. A problem is upstream data that is missing or contradicts itself.
+// Upstream strings end up in an issue posted by this repo, so only these shapes are accepted.
+const PLUGIN_NAME = /^[a-z0-9][a-z0-9-]{0,63}$/;
+const VERSION = /^\d+\.\d+\.\d+$/;
+
+// Each "- `path` — Skills for <Host>" bullet of README's "## Contents" section names one host (SPEC §2).
+function readmeHosts(readme) {
+  const contents = readme.match(/^## Contents\n([\s\S]*?)(?=^## |(?![\s\S]))/m)?.[1] ?? "";
+  return [...new Set([...contents.matchAll(/^- .*?— Skills for ([A-Z][\w]*(?: [A-Z][\w]*)*)/gm)].map((m) => m[1]))];
+}
+
+// Returns { facts, problems }. A problem is upstream data that is missing, malformed or contradicts itself.
 export function upstreamFacts({ readme, marketplace, manifest }) {
   const problems = [];
   const skills = manifest.skill_count;
-  if (skills !== manifest.skills.length) {
-    problems.push(`skills/manifest.json: skill_count ${skills} but ${manifest.skills.length} skills listed`);
+  if (!Number.isInteger(skills) || skills !== manifest.skills.length) {
+    problems.push(`skills/manifest.json: skill_count is not an integer equal to the ${manifest.skills.length} skills listed`);
   }
   const pstackVersions = [...new Set(manifest.skills.filter((s) => s.plugin === "pstack").map((s) => s.plugin_version))];
-  if (pstackVersions.length !== 1) {
-    problems.push(`skills/manifest.json: expected one pstack plugin_version, found ${JSON.stringify(pstackVersions)}`);
+  if (pstackVersions.length !== 1 || !VERSION.test(pstackVersions[0])) {
+    problems.push(`skills/manifest.json: expected one x.y.z pstack plugin_version, found ${pstackVersions.length} value(s)`);
   }
-  // README "Contents" names each host as "Skills for <Host>" (SPEC §2).
-  const hostNames = [...new Set([...readme.matchAll(/Skills for ([A-Z][\w ]*?)(?=[;,.]|\s+—|\s+including|$)/gm)].map((m) => m[1]))];
-  if (hostNames.length === 0) problems.push('README: no "Skills for <host>" line found in Contents');
+  const hostNames = readmeHosts(readme);
+  if (hostNames.length === 0) problems.push('README: no "Skills for <host>" bullet found in Contents');
+  const pluginNames = marketplace.plugins.map((p) => p.name);
+  const badNames = pluginNames.filter((name) => typeof name !== "string" || !PLUGIN_NAME.test(name)).length;
+  if (badNames > 0) problems.push(`.agents/plugins/marketplace.json: ${badNames} plugin name(s) are not lowercase kebab-case`);
   return {
     facts: {
       skills,
       defaultSkills: manifest.skills.filter((s) => s.default_install).length,
       hosts: hostNames.length,
       pstack: pstackVersions[0],
-      codexPlugins: marketplace.plugins.map((p) => p.name).filter((name) => !OPTIONAL_PLUGINS.has(name)),
+      codexPlugins: pluginNames.filter((name) => PLUGIN_NAME.test(name) && !OPTIONAL_PLUGINS.has(name)),
     },
     problems,
   };
@@ -82,7 +94,15 @@ export function compare(upstream, contents) {
   ];
 }
 
-const cell = (text) => String(text).replace(/\|/g, "\\|").replace(/\n/g, " ");
+// A code span keeps @mentions, #references, links and HTML inert. Backticks and control characters
+// cannot break out of it, and a pipe is escaped for the table.
+const MAX_CELL = 200;
+const cell = (text) => {
+  const flat = String(text).replace(/[\u0000-\u001f\u007f]/g, " ").replace(/`/g, "'").replace(/\|/g, "\\|");
+  return `\`${flat.length > MAX_CELL ? `${flat.slice(0, MAX_CELL)}...` : flat}\``;
+};
+
+export const FINGERPRINT_MARKER = "readme-check fingerprint:";
 
 // Identifies a set of diffs; the runner skips the update when an open issue already has this fingerprint.
 export const fingerprint = (diffs) => createHash("sha256").update(JSON.stringify(diffs)).digest("hex").slice(0, 16);
@@ -96,7 +116,7 @@ export function issueBody(diffs, { upstreamRef }) {
     "|---|---|---|---|",
     ...diffs.map((d) => `| ${cell(d.locale)} | ${cell(d.field)} | ${cell(d.expected)} | ${cell(d.actual)} |`),
     "",
-    `<!-- readme-check fingerprint:${fingerprint(diffs)} -->`,
+    `<!-- ${FINGERPRINT_MARKER}${fingerprint(diffs)} -->`,
     "",
   ].join("\n");
 }
