@@ -1,0 +1,74 @@
+{
+ "name": "poteto-skills",
+ "plugins": [
+  {
+   "name": "advisor"
+  },
+  {
+   "name": "agent-compatibility"
+  },
+  {
+   "name": "cli-for-agent"
+  },
+  {
+   "name": "continual-learning"
+  },
+  {
+   "name": "create-plugin"
+  },
+  {
+   "name": "cursor-sdk"
+  },
+  {
+   "name": "cursor-team-kit"
+  },
+  {
+   "name": "dyl-stack"
+  },
+  {
+   "name": "google-docs"
+  },
+  {
+   "name": "google-drive"
+  },
+  {
+   "name": "google-sheets"
+  },
+  {
+   "name": "google-slides"
+  },
+  {
+   "name": "grok-voice"
+  },
+  {
+   "name": "orchestrate"
+  },
+  {
+   "name": "origin-apps"
+  },
+  {
+   "name": "pstack"
+  },
+  {
+   "name": "ralph-loop"
+  },
+  {
+   "name": "tailscale"
+  },
+  {
+   "name": "teaching"
+  },
+  {
+   "name": "thermos"
+  },
+  {
+   "name": "x"
+  },
+  {
+   "name": "x-money"
+  },
+  {
+   "name": "codex-hooks"
+  }
+ ]
+}

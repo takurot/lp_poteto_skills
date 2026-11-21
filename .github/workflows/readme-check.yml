@@ -1,0 +1,31 @@
+name: readme-check
+
+# Weekly comparison of the LP numbers with takurot/poteto-skills (SPEC §8). It reports drift as an issue
+# and is not part of the deploy gate.
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: readme-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - run: node scripts/readme-check-run.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

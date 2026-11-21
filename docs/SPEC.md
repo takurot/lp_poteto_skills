@@ -242,7 +242,10 @@ TDD の対象はビルドの出力物である。先にテストを書き、出�
 
 ## 9. 運用
 
-- 数値の更新: §8 の定期照合が README との差分を検知したら Issue を立てる。`site/content/*.json` を直して再デプロイする。
+- 数値の更新: §8 の定期照合（`.github/workflows/readme-check.yml`、毎週月曜 03:17 UTC と手動実行）が差分を検知したら Issue を立てる。`site/content/*.json` を直して再デプロイする。
+  - 照合は `scripts/readme-check.mjs`（入出力なしの純関数、`tests/build/readme-check.test.mjs`）が行い、`scripts/readme-check-run.mjs` が上流を 1 つのコミットに固定して取得し、Issue を操作する。上流の値は `skills/manifest.json`（Skill 数、既定インストール数、pstack のバージョン）、`marketplace.json`（`codex-hooks` を除くプラグイン名）、README の Contents の「Skills for <host>」行（ホスト数）から取る。各言語の Numbers、プラグイン一覧、数値を繰り返す文（`install.defaultSetNote`、`codex.intro`、`codex.pluginsLabel`、`meta.description`）と比べる。
+  - Issue はラベル `readme-drift` で 1 件に保つ。差分が初めて出たら作成し、差分が変わったら本文を更新してコメントし、同じ差分なら何もしない。差分がなくなったらコメントして閉じる。ラベル付きの一覧は作成直後の数秒間は新しい Issue を返さないため、連続実行で重複した場合は最古の 1 件を残して他を閉じる（workflow にも concurrency を設定）。対象は本文に照合の fingerprint を持つ Issue だけで、人がラベルを付けた別の Issue は変更しない。上流の値は形式（整数、`x.y.z`、小文字のケバブケース）を検査してから使い、表のセルはコードスパンに入れてメンションやリンクを無効にする。Issue の操作は `scripts/readme-issue.mjs`（`tests/build/readme-issue.test.mjs` で偽の API を使って検査）。
+  - ローカル実行: `GITHUB_TOKEN=$(gh auth token) GITHUB_REPOSITORY=takurot/lp_poteto_skills node scripts/readme-check-run.mjs`（`CONTENT_DIR` で別の content を指定できる）。
 - 生成系の更新: 依存がないため、Node の LTS 更新に追従するだけでよい。
 - ロールバック: `wrangler rollback` で直前のバージョンに戻す（§5.4 のとおり、静的アセットの復元は Phase 3 で確認する）。
 
