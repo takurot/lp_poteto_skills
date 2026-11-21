@@ -1,0 +1,666 @@
+{
+ "schema_version": 3,
+ "skill_count": 110,
+ "skills": [
+  {
+   "name": "add-dictation",
+   "plugin": "grok-voice",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "add-read-aloud",
+   "plugin": "grok-voice",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "add-voice",
+   "plugin": "grok-voice",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "advisor",
+   "plugin": "advisor",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "architect",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "arena",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "automate-me",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "benchmark-checklist",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "blast-radius",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "bro",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "build-figma",
+   "plugin": "dyl-stack",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "cancel-ralph",
+   "plugin": "ralph-loop",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "check-agent-compatibility",
+   "plugin": "agent-compatibility",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "check-compiler-errors",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "cli-for-agents",
+   "plugin": "cli-for-agent",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "continual-learning",
+   "plugin": "continual-learning",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "control-cli",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "control-ui",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "correct",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "create-formal-verification-skill",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "create-learning-path",
+   "plugin": "teaching",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "create-plugin-scaffold",
+   "plugin": "create-plugin",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "create-verification-skill",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "cursor-sdk",
+   "plugin": "cursor-sdk",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "debug-voice",
+   "plugin": "grok-voice",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "deslop",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "docs-canvas",
+   "plugin": "docs-canvas",
+   "plugin_version": "0.1.0",
+   "default_install": false
+  },
+  {
+   "name": "dyl-mode",
+   "plugin": "dyl-stack",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "dyl-ready-pr",
+   "plugin": "dyl-stack",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "dyl-review",
+   "plugin": "dyl-stack",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "figure-it-out",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "fix-ci",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "fix-merge-conflicts",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "get-pr-comments",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "google-docs",
+   "plugin": "google-docs",
+   "plugin_version": "1.1.0",
+   "default_install": true
+  },
+  {
+   "name": "google-drive",
+   "plugin": "google-drive",
+   "plugin_version": "1.0.1",
+   "default_install": true
+  },
+  {
+   "name": "google-sheets",
+   "plugin": "google-sheets",
+   "plugin_version": "1.1.0",
+   "default_install": true
+  },
+  {
+   "name": "google-slides",
+   "plugin": "google-slides",
+   "plugin_version": "1.1.0",
+   "default_install": true
+  },
+  {
+   "name": "how",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "in-your-own-words",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "interrogate",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "ketchup",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "ketchup-video",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "loop-on-ci",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "maintain-formal-verification-skill",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "maintain-verification-skill",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "make-bot-ui",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "make-pr-easy-to-review",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "new-branch-and-pr",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "no-comments",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "orchestrate",
+   "plugin": "orchestrate",
+   "plugin_version": "1.1.0",
+   "default_install": true
+  },
+  {
+   "name": "origin-api",
+   "plugin": "origin-apps",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "port-github-app-to-origin",
+   "plugin": "origin-apps",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "poteto-help",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "poteto-mode",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "pr-review-canvas",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "principle-attack-the-premise",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-boundary-discipline",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-build-the-lever",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-encode-lessons-in-structure",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-exhaust-the-design-space",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-experience-first",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-explain-the-number",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-fix-root-causes",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-foundational-thinking",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-guard-the-context-window",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-laziness-protocol",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-make-operations-idempotent",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-migrate-callers-then-delete-legacy-apis",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-minimize-reader-load",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-model-the-domain",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-never-block-on-the-human",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-outcome-oriented-execution",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-prove-it-works",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-redesign-from-first-principles",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-separate-before-serializing-shared-state",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-sequence-verifiable-units",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-subtract-before-you-add",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-test-behavior-not-implementation",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "principle-the-algorithm",
+   "plugin": "dyl-stack",
+   "plugin_version": "0.1.0",
+   "default_install": true
+  },
+  {
+   "name": "principle-type-system-discipline",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "ralph-loop",
+   "plugin": "ralph-loop",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "ralph-loop-help",
+   "plugin": "ralph-loop",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "recall",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "reflect",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "review-and-ship",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "review-plugin-submission",
+   "plugin": "create-plugin",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "run-learning-retrospective",
+   "plugin": "teaching",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "run-smoke-tests",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "setup-pstack",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "sharpen",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "show-me-your-work",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "statechart",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "swarm",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "tailscale-setup",
+   "plugin": "tailscale",
+   "plugin_version": "1.0.6",
+   "default_install": true
+  },
+  {
+   "name": "tdd",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "teach",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "technical-writing",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "thermo-nuclear-code-quality-review",
+   "plugin": "thermos",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "thermo-nuclear-review",
+   "plugin": "thermos",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "thermos",
+   "plugin": "thermos",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  },
+  {
+   "name": "typescript-best-practices",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "unslop",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "verify-this",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "weekly-review",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "what-did-i-get-done",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "why",
+   "plugin": "pstack",
+   "plugin_version": "0.15.46",
+   "default_install": true
+  },
+  {
+   "name": "workflow-from-chats",
+   "plugin": "cursor-team-kit",
+   "plugin_version": "1.2.0",
+   "default_install": true
+  },
+  {
+   "name": "x-api-mcp-guide",
+   "plugin": "x",
+   "plugin_version": "2.11.1",
+   "default_install": true
+  },
+  {
+   "name": "x-money-guide",
+   "plugin": "x-money",
+   "plugin_version": "1.0.0",
+   "default_install": true
+  }
+ ]
+}
