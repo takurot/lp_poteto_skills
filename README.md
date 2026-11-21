@@ -98,4 +98,4 @@ LP に載せる数値（Skill 数、プラグイン数など）は [takurot/pote
 
 フォント（Archivo Black、Work Sans、Space Mono）は SIL Open Font License で、ライセンス全文は [site/static/fonts/](site/static/fonts/) にある。ページ内で言及する Cursor、Claude Code、Codex などの製品名はテキストでのみ使い、公式のロゴやブランド画像は使わない。
 
-このリポジトリ自体のライセンスファイルはまだない。
+このリポジトリのコード、テンプレート、文言、ドキュメントは [MIT ライセンス](LICENSE)。フォントは上記のとおり別のライセンス（OFL）で、MIT の対象外。
