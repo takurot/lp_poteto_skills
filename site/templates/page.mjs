@@ -3,7 +3,23 @@ import { esc } from "./escape.mjs";
 import { documentHtml } from "./layout.mjs";
 
 const list = (items) => ["<ul>", ...items.map((item) => `<li>${esc(item)}</li>`), "</ul>"];
-const commandBlocks = (commands) => commands.map((command) => `<pre><code>${esc(command)}</code></pre>`);
+
+// tabindex lets keyboard users scroll a long command in browsers whose scroll boxes take no focus.
+// copy.js reveals the hidden button and copies the code element its aria-describedby names (F4).
+function commandBlock(command, id, copy) {
+  return [
+    '<div class="cmd">',
+    `<pre tabindex="0"><code id="${esc(id)}">${esc(command)}</code></pre>`,
+    `<button type="button" class="btn btn-secondary btn-sm copy" aria-describedby="${esc(id)}" aria-live="polite" data-copied="${esc(copy.copiedLabel)}" hidden>${esc(copy.buttonLabel)}</button>`,
+    "</div>",
+  ];
+}
+
+const commandBlocks = (commands, idPrefix, copy) => [
+  '<div class="commands">',
+  ...commands.flatMap((command, index) => commandBlock(command, `${idPrefix}-${index + 1}`, copy)),
+  "</div>",
+];
 
 function headLines(content, page, siteUrl) {
   const url = `${siteUrl}${page.path}`;
@@ -20,6 +36,7 @@ function headLines(content, page, siteUrl) {
     `<meta property="og:url" content="${esc(url)}">`,
     `<meta property="og:image" content="${esc(`${siteUrl}/og.png`)}">`,
     '<meta name="twitter:card" content="summary_large_image">',
+    '<script src="/copy.js" defer></script>',
   ];
 }
 
@@ -69,25 +86,50 @@ function numbers({ numbers }) {
   ];
 }
 
+function install({ install, copy }) {
+  return [
+    '<section id="install" class="section" aria-labelledby="install-title">',
+    '<div class="wrap">',
+    `<h2 id="install-title">${esc(install.heading)}</h2>`,
+    `<p>${esc(install.intro)}</p>`,
+    ...commandBlocks(install.commands, "install-cmd", copy),
+    ...install.examples.flatMap(({ label, command }, index) => [
+      '<div class="example">',
+      `<p class="note">${esc(label)}</p>`,
+      ...commandBlock(command, `install-example-${index + 1}`, copy),
+      "</div>",
+    ]),
+    `<p>${esc(install.defaultSetNote)}</p>`,
+    "</div>",
+    "</section>",
+  ];
+}
+
+function codex({ codex, copy }) {
+  return [
+    '<section id="codex" class="section" aria-labelledby="codex-title">',
+    '<div class="wrap">',
+    `<h2 id="codex-title">${esc(codex.heading)}</h2>`,
+    `<p>${esc(codex.intro)}</p>`,
+    ...commandBlocks(codex.commands, "codex-cmd", copy),
+    `<p id="codex-plugins-label" class="overline">${esc(codex.pluginsLabel)}</p>`,
+    '<ul class="chips" aria-labelledby="codex-plugins-label">',
+    ...codex.plugins.map((plugin) => `<li>${esc(plugin)}</li>`),
+    "</ul>",
+    `<p class="aside">${esc(codex.codexHooksNote)}</p>`,
+    "</div>",
+    "</section>",
+  ];
+}
+
 function sections(content) {
-  const { install, codex, converts, boundaries, footer } = content;
+  const { converts, boundaries, footer } = content;
   return [
     "<main>",
     ...hero(content),
     ...numbers(content),
-    '<section id="install">',
-    `<h2>${esc(install.heading)}</h2>`,
-    `<p>${esc(install.intro)}</p>`,
-    ...commandBlocks(install.commands),
-    ...list(install.optionNotes),
-    "</section>",
-    '<section id="codex">',
-    `<h2>${esc(codex.heading)}</h2>`,
-    `<p>${esc(codex.intro)}</p>`,
-    ...commandBlocks(codex.commands),
-    ...list(codex.plugins),
-    `<p>${esc(codex.codexHooksNote)}</p>`,
-    "</section>",
+    ...install(content),
+    ...codex(content),
     '<section id="converts">',
     `<h2>${esc(converts.heading)}</h2>`,
     "<table>",

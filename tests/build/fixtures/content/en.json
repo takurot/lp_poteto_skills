@@ -28,16 +28,22 @@
       { "value": "4.0.0", "label": "Fixture number four EN" }
     ]
   },
+  "copy": { "buttonLabel": "Fixture copy EN", "copiedLabel": "Fixture copied EN" },
   "install": {
     "heading": "Fixture install EN",
     "intro": "Fixture install intro EN.",
     "commands": ["fixture-install --one", "fixture-install --two"],
-    "optionNotes": ["Fixture option note one EN.", "Fixture option note two EN."]
+    "examples": [
+      { "label": "Fixture example one EN.", "command": "fixture-install --example-one" },
+      { "label": "Fixture example two EN.", "command": "fixture-install --example-two" }
+    ],
+    "defaultSetNote": "Fixture default set note EN."
   },
   "codex": {
     "heading": "Fixture codex EN",
     "intro": "Fixture codex intro EN.",
     "commands": ["fixture-codex add", "fixture-codex list"],
+    "pluginsLabel": "Fixture plugins label EN",
     "plugins": ["fixture-plugin-a", "fixture-plugin-b"],
     "codexHooksNote": "Fixture hooks note EN."
   },

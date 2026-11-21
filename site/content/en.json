@@ -28,6 +28,10 @@
       { "value": "0.15.46", "label": "pstack" }
     ]
   },
+  "copy": {
+    "buttonLabel": "Copy",
+    "copiedLabel": "Copied"
+  },
   "install": {
     "heading": "Install",
     "intro": "Clone the repository and run the installer. By default it installs all Skills for both hosts at the user level.",
@@ -36,12 +40,13 @@
       "cd poteto-skills",
       "./install.sh"
     ],
-    "optionNotes": [
-      "Add --target claude or --target codex to install for one host only.",
-      "Add --scope project --project-dir /path/to/project to install into a project instead of your user directory.",
-      "Add --skill <name>, once per Skill, to install selected Skills. ./install.sh --list shows the names.",
-      "The default set installs 109 production-ready Skills. The experimental docs-canvas Skill is listed but not installed unless you select it."
-    ]
+    "examples": [
+      { "label": "Install for one host only, with --target claude or --target codex.", "command": "./install.sh --target codex" },
+      { "label": "Install into a project instead of your user directory.", "command": "./install.sh --target both --scope project --project-dir /path/to/project" },
+      { "label": "List the Skill names.", "command": "./install.sh --list" },
+      { "label": "Install selected Skills. Repeat --skill once per Skill.", "command": "./install.sh --target codex --skill thermos --skill tdd" }
+    ],
+    "defaultSetNote": "The default set installs 109 production-ready Skills. The experimental docs-canvas Skill is listed but not installed unless you select it."
   },
   "codex": {
     "heading": "Codex plugins",
@@ -51,6 +56,7 @@
       "codex plugin list",
       "codex plugin add pstack@poteto-skills"
     ],
+    "pluginsLabel": "The 22 plugins",
     "plugins": [
       "advisor",
       "agent-compatibility",
