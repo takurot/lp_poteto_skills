@@ -51,6 +51,16 @@ describe("site content", () => {
     }
   });
 
+  test("SPEC §3: the footer credits the upstream copyright holders and MIT", () => {
+    for (const locale of LOCALES) {
+      const { footer } = readContent(SITE_CONTENT_DIR, locale);
+      for (const name of ["Cursor", "Lauren Tan", "Anysphere, Inc.", "cursor/plugins", "pstack"]) {
+        assert.ok(`${footer.credits} ${footer.copyrightHolders}`.includes(name), `${locale} names ${name}`);
+      }
+      assert.match(footer.license, /MIT/);
+    }
+  });
+
   test("SPEC §11.2: the overline and the lead name both Claude Code and Codex", () => {
     for (const locale of LOCALES) {
       const { overline, lead } = readContent(SITE_CONTENT_DIR, locale).hero;

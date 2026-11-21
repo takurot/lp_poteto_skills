@@ -49,6 +49,7 @@
   },
   "converts": {
     "heading": "Fixture converts EN",
+    "columns": { "from": "Fixture column from EN", "to": "Fixture column to EN" },
     "rows": [
       { "from": "Fixture from one EN", "to": "Fixture to one EN" },
       { "from": "Fixture from two EN", "to": "Fixture to two EN" }

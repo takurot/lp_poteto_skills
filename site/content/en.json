@@ -85,6 +85,7 @@
   },
   "converts": {
     "heading": "How it converts",
+    "columns": { "from": "Cursor element", "to": "Converted result" },
     "rows": [
       { "from": "name, description", "to": "Normalized to the format each host supports" },
       { "from": "disable-model-invocation", "to": "Preserved for Claude Code. For Codex, converted to allow_implicit_invocation: false in agents/openai.yaml" },

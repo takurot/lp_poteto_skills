@@ -2,8 +2,6 @@ import { DEFAULT_LOCALE, GITHUB_URL, PAGES, pageFor } from "../pages.mjs";
 import { esc } from "./escape.mjs";
 import { documentHtml } from "./layout.mjs";
 
-const list = (items) => ["<ul>", ...items.map((item) => `<li>${esc(item)}</li>`), "</ul>"];
-
 // tabindex lets keyboard users scroll a long command in browsers whose scroll boxes take no focus.
 // copy.js reveals the hidden button and copies the code element its aria-describedby names (F4).
 function commandBlock(command, id, copy) {
@@ -122,34 +120,64 @@ function codex({ codex, copy }) {
   ];
 }
 
+function converts({ converts }) {
+  return [
+    '<section id="converts" class="section" aria-labelledby="converts-title">',
+    '<div class="wrap">',
+    `<h2 id="converts-title">${esc(converts.heading)}</h2>`,
+    '<table class="rules">',
+    `<thead><tr><th scope="col">${esc(converts.columns.from)}</th><th scope="col">${esc(converts.columns.to)}</th></tr></thead>`,
+    "<tbody>",
+    ...converts.rows.map(({ from, to }) => `<tr><th scope="row">${esc(from)}</th><td>${esc(to)}</td></tr>`),
+    "</tbody>",
+    "</table>",
+    "</div>",
+    "</section>",
+  ];
+}
+
+function boundaries({ boundaries }) {
+  return [
+    '<section id="boundaries" class="section" aria-labelledby="boundaries-title">',
+    '<div class="wrap">',
+    `<h2 id="boundaries-title">${esc(boundaries.heading)}</h2>`,
+    '<ul class="list">',
+    ...boundaries.items.map((item) => `<li>${esc(item)}</li>`),
+    "</ul>",
+    "</div>",
+    "</section>",
+  ];
+}
+
+function footer({ footer }) {
+  return [
+    '<footer class="site-footer">',
+    '<div class="wrap">',
+    `<p class="caption">${esc(footer.license)}</p>`,
+    `<p class="caption">${esc(footer.credits)}</p>`,
+    `<p class="caption">${esc(footer.copyrightHolders)}</p>`,
+    `<a class="btn btn-ghost" href="${esc(GITHUB_URL)}">${esc(footer.githubLabel)}</a>`,
+    "</div>",
+    "</footer>",
+  ];
+}
+
 function sections(content) {
-  const { converts, boundaries, footer } = content;
   return [
     "<main>",
     ...hero(content),
     ...numbers(content),
     ...install(content),
     ...codex(content),
-    '<section id="converts">',
-    `<h2>${esc(converts.heading)}</h2>`,
-    "<table>",
-    "<tbody>",
-    ...converts.rows.map(({ from, to }) => `<tr><th scope="row">${esc(from)}</th><td>${esc(to)}</td></tr>`),
-    "</tbody>",
-    "</table>",
-    "</section>",
-    '<section id="boundaries">',
-    `<h2>${esc(boundaries.heading)}</h2>`,
-    ...list(boundaries.items),
-    "</section>",
-    `<blockquote><p>${esc(content.pullQuote)}</p></blockquote>`,
+    ...converts(content),
+    ...boundaries(content),
+    '<div class="quote">',
+    '<div class="wrap">',
+    `<blockquote class="pull-quote"><p>${esc(content.pullQuote)}</p></blockquote>`,
+    "</div>",
+    "</div>",
     "</main>",
-    "<footer>",
-    `<p>${esc(footer.license)}</p>`,
-    `<p>${esc(footer.credits)}</p>`,
-    `<p>${esc(footer.copyrightHolders)}</p>`,
-    `<a href="${esc(GITHUB_URL)}">${esc(footer.githubLabel)}</a>`,
-    "</footer>",
+    ...footer(content),
   ];
 }
 
