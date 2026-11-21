@@ -94,10 +94,11 @@ Astryx は Phase 0 で不採用とした（詳細は [astryx-spike.md](./astryx-
 代わりに、**依存ゼロの Node スクリプト**で生成する。
 
 - 実行環境: Node 22 LTS。生成スクリプトは組み込みモジュール（`node:fs`、`node:path`）だけを使う。`package.json` の `dependencies` は空にし、`devDependencies` はテストと検証（`wrangler`、`@playwright/test`、`html-validate`、Lighthouse CI）だけにする。
-- 内容: `site/content/en.json` と `ja.json`。JSON なので数値と配列を使える。コマンド列は文字列の配列、プラグイン名の一覧も配列にする。
-- テンプレート: `site/templates/page.mjs` が `(content, locale) => string` を返す純関数。英語版と日本語版は同じテンプレートに別の `content` を渡すため、マークアップは重複しない。
+- 内容: `site/content/en.json` と `ja.json`。JSON なので数値と配列を使える。コマンド列は文字列の配列、プラグイン名の一覧も配列にする。両ファイルを `site/content/schema.mjs` の 1 つのスキーマ（`string`・`number`・`array`・`object` の宣言的な木）で検証する。
+- テンプレート: `site/templates/page.mjs` が `(content, locale, ctx) => string` を返す純関数（`ctx` は `{ siteUrl }`）。ページの一覧（locale、出力ファイル、パス）は `site/pages.mjs` の `PAGES` が唯一の定義で、canonical・hreflang・`og:url` はここから組み立てる。英語版と日本語版は同じテンプレートに別の `content` を渡すため、マークアップは重複しない。
 - エスケープ: テンプレート内の補間はすべて `esc()`（`& < > " '` を置換）を通す。生の HTML を埋め込む場所は作らない。
-- 出力は `build/` に書く。入力が同じなら出力は同じバイト列になる（現在時刻や乱数を使わない）。
+- 出力は `build/` に書く。入力が同じなら出力は同じバイト列になる（現在時刻や乱数を使わない）。ビルドは 2 段で、`renderSite()` が全ファイルをメモリ上に作り、`writeSite()` だけが書き込む。`writeSite()` は隣の `build.staging/` に書いてから `build/` と入れ替えるため、それより前の失敗でも書き込み途中の失敗でも、既存の `build/` は残る。
+- `scripts/build.mjs` は環境変数 `CONTENT_DIR`、`STATIC_DIR`、`OUT_DIR`、`SITE_URL` を読む（未設定ならリポジトリの既定値）。テストはこれを使い、子プロセスとして一時ディレクトリにビルドする。`OUT_DIR` はリポジトリ内なら `build/` か `temp/` の下に限り、入力ディレクトリと重なってはならない（`writeSite()` が丸ごと置き換えるため）。
 
 ### 5.2 生成系の要件
 
@@ -122,11 +123,14 @@ lp_poteto_skills/
 ├── site/
 │   ├── content/
 │   │   ├── en.json          # 全文言。数値と配列を使える
-│   │   └── ja.json
+│   │   ├── ja.json
+│   │   └── schema.mjs       # 両言語共通のスキーマと validate()
 │   ├── templates/
-│   │   ├── page.mjs         # (content, locale) => HTML。/ と /ja/ で共用
+│   │   ├── page.mjs         # (content, locale, ctx) => HTML。/ と /ja/ で共用
 │   │   ├── not-found.mjs    # 404 ページ
+│   │   ├── layout.mjs       # <head> と文書の外枠
 │   │   └── escape.mjs       # esc()
+│   ├── pages.mjs            # PAGES（locale・出力ファイル・パス）の唯一の定義
 │   └── static/
 │       ├── style.css        # §4 のトークンとコンポーネント
 │       ├── fonts/           # woff2（Archivo Black, Work Sans, Space Mono）
@@ -135,7 +139,8 @@ lp_poteto_skills/
 │       ├── robots.txt
 │       └── _headers
 ├── scripts/
-│   └── build.mjs            # content 検証 → HTML 生成 → static コピー → build/ に出力
+│   ├── build.mjs            # 環境変数を読み、site.mjs の各段を順に呼ぶ
+│   └── site.mjs             # loadContents（検証）→ renderSite（メモリ上で生成）→ writeSite（build/ に出力）
 ├── tests/
 │   ├── build/               # node --test。出力物と content の検査
 │   └── e2e/                 # Playwright
@@ -193,7 +198,7 @@ CSS のハッシュ付け（`style.<hash>.css`）は任意とする。ファイ�
 | ID | 要件 |
 |---|---|
 | F1 | `/` に英語版、`/ja/` に日本語版を表示する。`<html lang>` を正しく設定する |
-| F2 | 両ページに `hreflang` の相互リンクと canonical を置く。URL は絶対 URL にする。ベース URL は環境変数 `SITE_URL`（初期値は `https://poteto-skills.<account>.workers.dev`）からビルド時に差し込む（`scripts/build.mjs`） |
+| F2 | 両ページに `hreflang` の相互リンクと canonical を置く。URL は絶対 URL にする。ベース URL は環境変数 `SITE_URL`（`https://poteto-skills.<account>.workers.dev`。Phase 3 で設定するまでの既定値は仮の `https://poteto-skills.example.workers.dev`）からビルド時に差し込む（`scripts/build.mjs`） |
 | F3 | GitHub CTA は `https://github.com/takurot/poteto-skills` へリンクする |
 | F4 | インストールコマンドはテキストとして選択、コピーできる。各コマンドにコピーボタンを付ける（決定済み）。JS は外部ファイル 1 つ（`/copy.js`）、1KB 未満、`script-src 'self'` の範囲で動かす。JS が無効でもコマンドは選択・コピーでき、その場合ボタンは表示しない（`hidden` 属性を JS で外す） |
 | F5 | 404 ページを VoiceBox のスタイルで用意する |
