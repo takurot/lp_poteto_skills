@@ -35,7 +35,7 @@
   },
   "install": {
     "heading": "Install",
-    "intro": "Clone the repository and run the installer. By default it installs all Skills for both hosts at the user level.",
+    "intro": "Clone the repository and run the installer. By default it installs the production-ready Skills for both hosts at the user level.",
     "commands": [
       "git clone https://github.com/takurot/poteto-skills.git",
       "cd poteto-skills",
@@ -47,7 +47,7 @@
       { "label": "List the Skill names.", "command": "./install.sh --list" },
       { "label": "Install selected Skills. Repeat --skill once per Skill.", "command": "./install.sh --target codex --skill thermos --skill tdd" }
     ],
-    "defaultSetNote": "The default set installs 109 production-ready Skills. The experimental docs-canvas Skill is listed but not installed unless you select it."
+    "defaultSetNote": "The default set installs 109 production-ready Skills. The experimental docs-canvas Skill is listed but not installed unless you select it with --skill docs-canvas."
   },
   "codex": {
     "heading": "Codex plugins",
@@ -82,7 +82,7 @@
       "x",
       "x-money"
     ],
-    "codexHooksNote": "The separate codex-hooks plugin adds native Codex Stop hooks. It requires Python 3, and you review and trust its hook scripts before use."
+    "codexHooksNote": "The separate codex-hooks plugin adds native Codex Stop hooks. It requires Python 3. Review and trust its hook scripts, then enable each feature per session."
   },
   "converts": {
     "heading": "How it converts",
@@ -103,7 +103,7 @@
       "Skills that use MCP need the corresponding MCP server configured separately in Claude Code or Codex.",
       "Skills that operate the Cursor SDK or Cursor Cloud Agents still require Cursor credentials and services.",
       "Named Cursor subagents are not registered automatically. Their definitions are bundled under references/cursor-agents/.",
-      "Skills that use Cursor Canvas fall back to a standalone HTML artifact when Canvas is unavailable."
+      "Skills that use Cursor Canvas include a fallback to a standalone HTML artifact when Canvas is unavailable."
     ]
   },
   "pullQuote": "Skill instructions and local resources can be converted, but Cursor-specific runtime capabilities are not bundled.",
