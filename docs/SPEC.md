@@ -291,9 +291,9 @@ Phase 4 で確認済み（2026-11-21、#20）:
 
 Phase 4 の受け入れ確認（2026-11-21、#21）。結果は `main` の `c4aadca` に #20、#21 の変更を載せたビルドで取った。
 
-1. 文言の推敲。上流の `README.md`・`README_JP.md`・`skills/manifest.json`・`marketplace.json` と全文を突き合わせた。数値、コマンド、フラグ、プラグイン名、ライセンス表記に誤りはなかった。直したのは、README が言っていないことを言っていた 3 点（既定のインストールを「全 Skill」とした、Canvas のフォールバックを実行時の動作として書いた、codex-hooks の有効化手順が抜けていた）と、日本語の言い回し（「Skills」と「Skill」の混在、「upstream」と「上流」の混在、リード文）。`og:title` は Hero 見出しに合わせたままにした。`meta.description` は英語 136 字、日本語 102 字。
+1. 文言の推敲。上流の `README.md`・`README_JP.md`・`skills/manifest.json`・`marketplace.json` と全文を突き合わせた。数値、コマンド、フラグ、プラグイン名、ライセンス表記に誤りはなかった。直したのは、README が言っていないことを言っていた 3 点（既定のインストールを「全 Skill」とした、Canvas のフォールバックを実行時の動作として書いた、codex-hooks の有効化手順が抜けていた）と、日本語の言い回し（「Skills」と「Skill」の混在、「upstream」と「上流」の混在、リード文）。`og:title` は Hero 見出しに合わせたままにした。`meta.description` は英語 136 字、日本語 101 字。
 2. §1 の成功基準。(1) 10 秒で分かるかは、Overline「CURSOR PLUGINS → CLAUDE CODE & CODEX」とリード文を読んだ判断で、計測していない。(2) インストールへの到達は Playwright で計測した。最初のコマンドの下端は 360×640 で 1012px、360×800 で 1012px、1280×800 で 952px。360×640 でも最初のコマンドまでのスクロールは 372px で、1 画面の高さ（640px）より短い。最後のコマンドまででも 489px で 1 画面に収まる。(3) 主要 CTA は両ページとも `btn-primary` が 1 つ（「View on GitHub」「GitHub で見る」）。ヘッダーとフッターの GitHub リンクは Ghost ボタン。
-3. §6 の F1〜F7 は、`npm test`（139 件）と `npm run e2e`（45 件）が全件通っている。F2・F6 は `SITE_URL` から作った絶対 URL を `output.test.mjs` が検査する。
+3. §6 の F1〜F7 は、`npm test`（139 件）と `npm run e2e`（49 件）が全件通っている。F2・F6 は `SITE_URL` から作った絶対 URL を `output.test.mjs` が検査する。
 4. §7。Lighthouse（モバイル、`wrangler dev` 経由、`/` と `/ja/` を各 3 回）は Performance、Accessibility、SEO、Best Practices がすべて 1.00。HTML+CSS の gzip 合計は 9372 バイト（上限 51200）。`html-validate` はエラー 0。
 5. §8 の README 照合（`readme-check-run.mjs`、上流 `17e42df`）は差分 0。
 
