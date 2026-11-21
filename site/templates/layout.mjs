@@ -14,6 +14,7 @@ export function documentHtml({ lang, title, description, headLines = [], bodyLin
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(description)}">`,
     ...headLines,
+    '<link rel="icon" href="/favicon.svg" type="image/svg+xml">',
     ...PRELOAD_FONTS.map((href) => `<link rel="preload" href="${esc(href)}" as="font" type="font/woff2" crossorigin>`),
     '<link rel="stylesheet" href="/style.css">',
     "</head>",

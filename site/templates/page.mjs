@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, GITHUB_URL, PAGES, pageFor } from "../pages.mjs";
+import { DEFAULT_LOCALE, GITHUB_URL, OG_IMAGE, PAGES, pageFor } from "../pages.mjs";
 import { esc } from "./escape.mjs";
 import { documentHtml } from "./layout.mjs";
 
@@ -32,7 +32,10 @@ function headLines(content, page, siteUrl) {
     `<meta property="og:title" content="${esc(content.meta.og.title)}">`,
     `<meta property="og:description" content="${esc(content.meta.og.description)}">`,
     `<meta property="og:url" content="${esc(url)}">`,
-    `<meta property="og:image" content="${esc(`${siteUrl}/og.png`)}">`,
+    `<meta property="og:image" content="${esc(`${siteUrl}${OG_IMAGE.path}`)}">`,
+    `<meta property="og:image:width" content="${esc(OG_IMAGE.width)}">`,
+    `<meta property="og:image:height" content="${esc(OG_IMAGE.height)}">`,
+    `<meta property="og:image:alt" content="${esc(content.meta.og.imageAlt)}">`,
     '<meta name="twitter:card" content="summary_large_image">',
     '<script src="/copy.js" defer></script>',
   ];

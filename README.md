@@ -53,14 +53,16 @@ docs/        SPEC.md（仕様）、deploy.md（デプロイ手順）、voicebox-
 site/
   content/   en.json、ja.json、schema.mjs（スキーマと検証）
   templates/ page.mjs、not-found.mjs、escape.mjs（純関数のテンプレート）
-  static/    style.css、copy.js、fonts/、_headers、robots.txt
-scripts/     build.mjs ほか（ビルド、サイズ検査、README 照合）
+  static/    style.css、copy.js、fonts/、og.png、favicon.svg、_headers、robots.txt
+scripts/     build.mjs ほか（ビルド、サイズ検査、README 照合、OGP 画像の生成）
 tests/
   build/     node --test（出力物と content の検査）
   e2e/       Playwright
 .github/workflows/  deploy.yml、readme-check.yml
 wrangler.jsonc      Workers Static Assets の設定
 ```
+
+`site/static/og.png`（OGP 画像、1200×630）はビルドでは作らず、コミット済みのファイルをコピーする。画像の文言やデザインを変えたら `node scripts/generate-og.mjs` で作り直し、PNG をコミットする（Playwright の Chromium が必要。`npx playwright install chromium`）。
 
 文言は `site/content/{en,ja}.json` に置く。英語版と日本語版はキー集合が一致していなければならず、スキーマに合わないとビルドは非ゼロで終了して何も書かない。テンプレートの補間はすべて `esc()` を通す。
 

@@ -4,7 +4,8 @@
     "description": "Skills from the official cursor/plugins collection, converted into formats that Claude Code and Codex can load. Includes pstack 0.15.46.",
     "og": {
       "title": "pstack for Codex | poteto-skills",
-      "description": "Skills from the official cursor/plugins collection, converted for Claude Code and Codex."
+      "description": "Skills from the official cursor/plugins collection, converted for Claude Code and Codex.",
+      "imageAlt": "Wordmark POTETO-SKILLS above the headline “pstack for Codex” and the line “Skills for Claude Code & Codex”."
     }
   },
   "header": {

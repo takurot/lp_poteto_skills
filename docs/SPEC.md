@@ -136,12 +136,13 @@ lp_poteto_skills/
 │   └── static/
 │       ├── style.css        # §4 のトークンとコンポーネント
 │       ├── fonts/           # woff2（Archivo Black, Work Sans, Space Mono）
-│       ├── og.png           # 1200×630
-│       ├── favicon.svg
+│       ├── og.png           # 1200×630。scripts/generate-og.mjs が生成し、コミットする
+│       ├── favicon.svg      # 黒の正方形と赤の横棒 1 本。文字は使わない
 │       ├── robots.txt
 │       └── _headers
 ├── scripts/
 │   ├── build.mjs            # 環境変数を読み、site.mjs の各段を順に呼ぶ
+│   ├── generate-og.mjs      # og.png を Playwright Chromium と自前フォントで描画する。文言を変えたら手で再実行する
 │   └── site.mjs             # loadContents（検証）→ renderSite（メモリ上で生成）→ writeSite（build/ に出力）
 ├── tests/
 │   ├── build/               # node --test。出力物と content の検査
@@ -211,7 +212,7 @@ CSS のハッシュ付け（`style.<hash>.css`）は任意とする。ファイ�
 | F3 | GitHub CTA は `https://github.com/takurot/poteto-skills` へリンクする |
 | F4 | インストールコマンドはテキストとして選択、コピーできる。各コマンドにコピーボタンを付ける（決定済み）。JS は外部ファイル 1 つ（`/copy.js`）、1KB 未満、`script-src 'self'` の範囲で動かす。JS が無効でもコマンドは選択・コピーでき、その場合ボタンは表示しない（`hidden` 属性を JS で外す） |
 | F5 | 404 ページを VoiceBox のスタイルで用意する |
-| F6 | OGP / Twitter Card（タイトル、説明、`og:url`、`og:image`）を設定する。`og:url` と `og:image` は絶対 URL（F2 の `SITE_URL`） |
+| F6 | OGP / Twitter Card（タイトル、説明、`og:url`、`og:image`、`og:image:width`・`og:image:height`・`og:image:alt`）を設定する。`og:url` と `og:image` は絶対 URL（F2 の `SITE_URL`）。画像は `/og.png`（1200×630、英語のみで両言語共通）、代替テキストは `meta.og.imageAlt`。`twitter:image` は置かない（X のカード仕様では `twitter:image` がないと `og:image` を使う。実機のカードでは未確認、§12）。全ページ（404 を含む）の `<head>` に `<link rel="icon" href="/favicon.svg" type="image/svg+xml">` を置く |
 | F7 | 外部ドメインへのリクエスト（フォント含む）、外部 JS、解析タグ、Cookie は使わない |
 
 ## 7. 非機能要件
@@ -281,6 +282,16 @@ Phase 3 で確認済み（2026-11-21）:
 
 4. `SITE_URL` の更新と再デプロイ（2026-11-21）。ユーザーがダッシュボードでサブドメインを `void-technology` に変更した。`main` の `7ec505e` からビルドして `wrangler deploy` を実行し、本番は `https://poteto-skills.void-technology.workers.dev`。`/`・`/ja/` が 200、canonical・hreflang・`og:url`・`og:image` が新しい URL になり、CSP に `connect-src 'self'`、`Cross-Origin-Opener-Policy: same-origin` が付いた。`og:image` が指す `/og.png` は 404（Phase 4）。
 5. `wrangler rollback` による静的アセットの復元（2026-11-21）。確認用ファイル `rollback-probe.txt` だけを足した 2 つ目のバージョン（`a28bb0bb`）を出すと `/rollback-probe.txt` が 200、直前のバージョン（`edf39fd7`）へ `wrangler rollback` すると 404 に戻った。**静的アセットも前のバージョンに戻る**。反映までの待ちは 8 秒以内だった。確認後の本番は `edf39fd7` で、`main` と同じビルド。
+
+Phase 4 で確認済み（2026-11-21、#20）:
+
+1. `og.png` の生成。`node scripts/generate-og.mjs` が Playwright Chromium で 1200×630 の HTML を描画してスクリーンショットを撮り、`site/static/og.png` に書く。フォントは `site/static/fonts/` の woff2 を data URL で埋め込み、総称フォントへのフォールバックを置かない。フォントが読み込めない場合、文字が画像からはみ出す場合、赤の横棒の外に彩度のある画素がある場合は、PNG を書かずに非ゼロで終了する（文字の色を緑にした試行で 8465 画素を検出して失敗し、PNG は変わらなかった）。新しい依存はない。
+2. 画像の中身。黒 `#0A0A0A` の地に `#FAFAFA` の Archivo Black でワードマーク `POTETO-SKILLS` と見出し `pstack for Codex`（2 行に折り返す）、赤 `#EF4444` の横棒 1 本（192×12px）、Work Sans 500 で `Skills for Claude Code & Codex`。画素を数えると、彩度のある画素は 2304 個（192×12）ですべて横棒の範囲にあり、色は `#EF4444` だけだった。文字の切れはない。
+3. 配信。`wrangler dev` 上で `/og.png` が 200 `image/png`、`/favicon.svg` が 200 `image/svg+xml`。`/`・`/ja/`・404 の `<link rel="icon">` と、`/`・`/ja/` の `og:image` のパスがどちらも 200（E2E）。HTML+CSS の gzip 合計は 9514 バイト。
+
+Phase 4 で未確認:
+
+1. SNS のカード表示（X、Facebook、Slack などのプレビュー）。本番へのデプロイ前で、外部のカード確認ツールからこの環境の成果物を読めないため確認していない。デプロイ後に `https://poteto-skills.void-technology.workers.dev/` をカード確認ツールに通し、ここに記録する。
 
 Phase 3 で未確認（ユーザーの判断待ち）:
 
