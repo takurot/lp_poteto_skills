@@ -9,7 +9,7 @@ Claude Code / Codex は、以下の6ステージで作業する。
 
 ## 技術スタック
 
-- 生成系は依存ゼロの Node スクリプト（Node 22、`node:fs` / `node:path` のみ）。Astryx は Phase 0 で不採用（[docs/astryx-spike.md](docs/astryx-spike.md)）。再検討しない。
+- 生成系は依存ゼロの Node スクリプト（Node 22.22 以上。`package.json` の `engines` は `^22.22.0 || >=24.8.0`。`node:fs` / `node:path` のみ）。Astryx は Phase 0 で不採用（[docs/astryx-spike.md](docs/astryx-spike.md)）。再検討しない。
 - `dependencies` は空に保つ。`devDependencies` はテストと検証（`wrangler`、`@playwright/test`、`html-validate`、Lighthouse CI）だけにする。
 - コンテンツは `site/content/{en,ja}.json`、テンプレートは `site/templates/` の純関数、出力は `build/`（コミットしない）。
 - 補間はすべて `esc()` を通す。生HTMLを埋め込む場所を作らない。出力は決定的にする（現在時刻・乱数を使わない）。

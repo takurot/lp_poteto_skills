@@ -26,16 +26,19 @@ function isWithin(dir, inner) {
   return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
-const WRITABLE_IN_REPO = ["build", "temp"].map((dir) => path.join(repoRoot, dir));
+const BUILD_DIR = path.join(repoRoot, "build");
+const TEMP_DIR = path.join(repoRoot, "temp");
 
-// writeSite replaces OUT_DIR wholesale, so it must not reach source files or overlap a build input.
+// writeSite replaces OUT_DIR wholesale, so it must not reach source files, the shared temp/ scratch
+// root, or a build input.
 function resolveOutDir(raw, inputDirs) {
   const outDir = path.resolve(repoRoot, raw);
   if (isWithin(outDir, repoRoot)) {
     throw new BuildInputError(`OUT_DIR ${outDir} would delete the repository`);
   }
-  if (isWithin(repoRoot, outDir) && !WRITABLE_IN_REPO.some((dir) => isWithin(dir, outDir))) {
-    throw new BuildInputError(`OUT_DIR ${outDir} is inside the repository but not under build/ or temp/`);
+  const allowedInRepo = outDir === BUILD_DIR || (isWithin(TEMP_DIR, outDir) && outDir !== TEMP_DIR);
+  if (isWithin(repoRoot, outDir) && !allowedInRepo) {
+    throw new BuildInputError(`OUT_DIR ${outDir} is inside the repository but is neither build/ nor a directory below temp/`);
   }
   const clash = inputDirs.find((dir) => isWithin(outDir, dir) || isWithin(dir, outDir));
   if (clash) {

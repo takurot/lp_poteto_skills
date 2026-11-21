@@ -1,5 +1,6 @@
 /build/
 /build.staging/
+/build.previous/
 node_modules/
 .wrangler/
 .DS_Store
