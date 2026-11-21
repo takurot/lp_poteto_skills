@@ -285,7 +285,7 @@ Phase 3 で確認済み（2026-11-21）:
 
 Phase 4 で確認済み（2026-11-21、#20）:
 
-1. `og.png` の生成。`node scripts/generate-og.mjs` が Playwright Chromium で 1200×630 の HTML を描画してスクリーンショットを撮り、`site/static/og.png` に書く。フォントは `site/static/fonts/` の woff2 を data URL で埋め込み、総称フォントへのフォールバックを置かない。フォントが読み込めない場合と、文字が画像からはみ出す場合は非ゼロで終了する。新しい依存はない。
+1. `og.png` の生成。`node scripts/generate-og.mjs` が Playwright Chromium で 1200×630 の HTML を描画してスクリーンショットを撮り、`site/static/og.png` に書く。フォントは `site/static/fonts/` の woff2 を data URL で埋め込み、総称フォントへのフォールバックを置かない。フォントが読み込めない場合、文字が画像からはみ出す場合、赤の横棒の外に彩度のある画素がある場合は、PNG を書かずに非ゼロで終了する（文字の色を緑にした試行で 8465 画素を検出して失敗し、PNG は変わらなかった）。新しい依存はない。
 2. 画像の中身。黒 `#0A0A0A` の地に `#FAFAFA` の Archivo Black でワードマーク `POTETO-SKILLS` と見出し `pstack for Codex`（2 行に折り返す）、赤 `#EF4444` の横棒 1 本（192×12px）、Work Sans 500 で `Skills for Claude Code & Codex`。画素を数えると、彩度のある画素は 2304 個（192×12）ですべて横棒の範囲にあり、色は `#EF4444` だけだった。文字の切れはない。
 3. 配信。`wrangler dev` 上で `/og.png` が 200 `image/png`、`/favicon.svg` が 200 `image/svg+xml`。`/`・`/ja/`・404 の `<link rel="icon">` と、`/`・`/ja/` の `og:image` のパスがどちらも 200（E2E）。HTML+CSS の gzip 合計は 9514 バイト。
 
