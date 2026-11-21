@@ -173,7 +173,7 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
 - ビルドは GitHub Actions で行い、`actions/setup-node`（`.nvmrc` の Node 22、22.22 以上）で `scripts/build.mjs` を実行してから `wrangler deploy` する。Cloudflare 側のビルド環境は使わない（ビルド環境の差異を避け、テストを通した成果物だけをデプロイするため）。このプロジェクトには `wrangler.jsonc` があるため、デプロイ操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
 - 認証は `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を GitHub Secrets に置く。権限は Workers Scripts: Edit から始め、デプロイが権限不足で失敗したら必要な権限（Account Settings: Read など）を足して記録する。リポジトリに秘密情報は置かない。設定手順は [deploy.md](./deploy.md)。シークレットが未設定の間、`deploy` と `preview` ジョブは警告とジョブサマリーを出して Cloudflare の手順を飛ばす（テストは常に実行する）。
 - `main` への push で本番にデプロイする。PR では `wrangler versions upload` でバージョンを作る。プレビュー URL は `workers_dev` の設定に従い、本番の設定を使う点に注意する。PR コメントの投稿には `permissions: pull-requests: write` が必要。フォークからの PR にはシークレットが渡らないため、プレビューは同一リポジトリのブランチからの PR だけに限る。
-- ドメインは `poteto-skills.<subdomain>.workers.dev` で公開する。独自ドメインは使わない（決定済み）。初回デプロイで `https://poteto-skills.lp-poteto-skills.workers.dev` が割り当てられた（サブドメインの確定は §12）。
+- ドメインは `poteto-skills.<subdomain>.workers.dev` で公開する。独自ドメインは使わない（決定済み）。初回デプロイで `https://poteto-skills.lp-poteto-skills.workers.dev` が割り当てられ、その後ユーザーがダッシュボードでサブドメインを `void-technology` に変更した。公開 URL は `https://poteto-skills.void-technology.workers.dev`（§12）。
 - ロールバックは `wrangler rollback` を使う。静的アセットも前のバージョンに戻るかは未検証（§12）。
 - 404 ページ: `not_found_handling: "404-page"` は最も近い `404.html` を探す。`scripts/build.mjs` が `build/404.html` を直接出力する（`404/index.html` にはしない）。
 
@@ -281,8 +281,7 @@ Phase 3 で確認済み（2026-11-21）:
 
 Phase 3 で未確認（ユーザーの判断待ち）:
 
-1. workers.dev サブドメイン。アカウントにサブドメインがなく、`wrangler deploy` は非対話の実行で既定の `lp-poteto-skills` を登録した。サブドメインはアカウント全体の設定でユーザーが選ぶものなので、ここでデプロイを止めた。ダッシュボードの Workers & Pages → Subdomain で変更できる。
-2. `SITE_URL` の更新と再デプロイ。サブドメインが決まってから `deploy.yml` の `env.SITE_URL` を実 URL にし、ビルドして再デプロイする。現在の本番は仮の `https://poteto-skills.example.workers.dev` で canonical・hreflang・`og:url`・`og:image` を出しており、CSP も `connect-src` 追加前のもの。`deploy` ジョブは仮の値のままでは失敗する。
-3. `wrangler rollback` による静的アセットの復元。2 つ目のバージョンを出して戻す検証は、上記の再デプロイと合わせて行う（手順は §9）。
-4. API トークンの必要最小権限。トークンが存在せず、作成もしていない。ユーザーが Workers Scripts: Edit だけのトークンを作り、[deploy.md](./deploy.md) のとおり GitHub Secrets に入れて `main` に push し、`deploy` ジョブが失敗したらエラーに出た権限を足して、ここに記録する。
-5. PR プレビュー（`wrangler versions upload` とコメント）。シークレットが入るまで実行されない。
+1. 再デプロイ。サブドメインは `void-technology` に確定し、`deploy.yml` の `env.SITE_URL` を `https://poteto-skills.void-technology.workers.dev` にした（応答は確認済み: `/` と `/ja/` が 200、旧サブドメインは応答しない）。この変更を `main` から再デプロイするには、下の API トークンとシークレットが必要。再デプロイするまで、現在の本番は仮の `https://poteto-skills.example.workers.dev` で canonical・hreflang・`og:url`・`og:image` を出しており、CSP も `connect-src` 追加前のもの。`deploy` ジョブは仮の値のままでは失敗する。
+2. `wrangler rollback` による静的アセットの復元。2 つ目のバージョンを出して戻す検証は、上記の再デプロイと合わせて行う（手順は §9）。
+3. API トークンの必要最小権限。トークンが存在せず、作成もしていない。ユーザーが Workers Scripts: Edit だけのトークンを作り、[deploy.md](./deploy.md) のとおり GitHub Secrets に入れて `main` に push し、`deploy` ジョブが失敗したらエラーに出た権限を足して、ここに記録する。
+4. PR プレビュー（`wrangler versions upload` とコメント）。シークレットが入るまで実行されない。
