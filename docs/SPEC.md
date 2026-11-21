@@ -173,8 +173,8 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
 - ビルドは GitHub Actions で行い、`actions/setup-node`（`.nvmrc` の Node 22、22.22 以上）で `scripts/build.mjs` を実行してから `wrangler deploy` する。Cloudflare 側のビルド環境は使わない（ビルド環境の差異を避け、テストを通した成果物だけをデプロイするため）。このプロジェクトには `wrangler.jsonc` があるため、デプロイ操作は Wrangler で行う（`cf` CLI は Wrangler 設定のないプロジェクト向け）。
 - 認証は `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を GitHub Secrets に置く。権限は Workers Scripts: Edit から始め、デプロイが権限不足で失敗したら必要な権限（Account Settings: Read など）を足して記録する。リポジトリに秘密情報は置かない。設定手順は [deploy.md](./deploy.md)。シークレットが未設定の間、`deploy` と `preview` ジョブは警告とジョブサマリーを出して Cloudflare の手順を飛ばす（テストは常に実行する）。
 - `main` への push で本番にデプロイする。PR では `wrangler versions upload` でバージョンを作る。プレビュー URL は `workers_dev` の設定に従い、本番の設定を使う点に注意する。PR コメントの投稿には `permissions: pull-requests: write` が必要。フォークからの PR にはシークレットが渡らないため、プレビューは同一リポジトリのブランチからの PR だけに限る。
-- ドメインは、まず `poteto-skills.<account>.workers.dev` で公開する。独自ドメインは使わない（決定済み）。
-- ロールバックは `wrangler rollback` を使う。静的アセットも前のバージョンに戻るかは未検証のため、Phase 3 で実際に確認して記録する。
+- ドメインは `poteto-skills.<subdomain>.workers.dev` で公開する。独自ドメインは使わない（決定済み）。初回デプロイで `https://poteto-skills.lp-poteto-skills.workers.dev` が割り当てられた（サブドメインの確定は §12）。
+- ロールバックは `wrangler rollback` を使う。静的アセットも前のバージョンに戻るかは未検証（§12）。
 - 404 ページ: `not_found_handling: "404-page"` は最も近い `404.html` を探す。`scripts/build.mjs` が `build/404.html` を直接出力する（`404/index.html` にはしない）。
 
 `_headers`（フォントを自前配信するため外部ドメインは不要。`markdown()` のコードフェンスを使わないのでインライン `style=` も出ない）:
@@ -244,7 +244,7 @@ TDD の対象はビルドの出力物である。先にテストを書き、出�
 
 - 数値の更新: §8 の定期照合が README との差分を検知したら Issue を立てる。`site/content/*.json` を直して再デプロイする。
 - 生成系の更新: 依存がないため、Node の LTS 更新に追従するだけでよい。
-- ロールバック: `wrangler rollback` で直前のバージョンに戻す（§5.4 のとおり、静的アセットの復元は Phase 3 で確認する）。
+- ロールバック: `wrangler rollback` で直前のバージョンに戻す（静的アセットの復元は未確認、§12）。確認手順: 変更したアセット（例: `robots.txt` に 1 行足したもの）をコミットせずにビルドしてデプロイし、本番で取得してハッシュを記録する。`npx wrangler rollback` を実行し、同じアセットのハッシュが元に戻ることを確かめる。最後に `main` のビルドを再デプロイする。
 
 ## 10. 実装フェーズ
 
@@ -270,7 +270,16 @@ Phase 0 で確認済み（2026-11-20、詳細は [astryx-spike.md](./astryx-spik
 
 1. Astryx は `lexical-core` の更新でビルドできるが、出力 HTML の構造が壊れている。生成系を依存ゼロの Node スクリプトに切り替えることをユーザーが承認した。
 
-Phase 3 で確認する:
+Phase 3 で確認済み（2026-11-21）:
 
-1. API トークンの必要最小権限（コミュニティの報告のみ）。
-2. `wrangler rollback` による静的アセットの復元。
+1. 初回デプロイ。同名の Worker `poteto-skills` がアカウントにないこと（`wrangler deployments list` が code 10007）を確かめてから、ローカルの OAuth ログインで `wrangler deploy` を 1 回実行した。公開 URL は `https://poteto-skills.lp-poteto-skills.workers.dev`。TLS が有効になるまで約 80 秒かかった。
+2. 本番の配信。`/`・`/ja/` が 200、`/ja` が `/ja/` への 307、未知のパスが 404 で 404 ページ、`/robots.txt` が 200。全レスポンスに CSP・nosniff・Referrer-Policy が付き、フォントは `max-age=31536000, immutable`、CSS は `max-age=3600`、HTML は Cloudflare 既定の `max-age=0, must-revalidate`。`/.build-output`・`/.assetsignore`・`_headers` は 404（`.assetsignore` と `_headers` の扱いが本番でも効いている）。`wrangler dev` と同じ結果だった。
+3. 本番の Lighthouse（モバイル、各 3 回）で SEO が 0.92 だった。原因は CSP の `default-src 'none'` が robots-txt 監査の fetch を止めたこと。`connect-src 'self'` を追加し、Lighthouse CI を `wrangler dev` 経由に変えた（§5.4、§8）。Accessibility は全回 1.00。Performance は 0.73〜0.98 で、遅い回は TBT が長い（同じマシンで別の処理が動いていた時間帯）。
+
+Phase 3 で未確認（ユーザーの判断待ち）:
+
+1. workers.dev サブドメイン。アカウントにサブドメインがなく、`wrangler deploy` は非対話の実行で既定の `lp-poteto-skills` を登録した。サブドメインはアカウント全体の設定でユーザーが選ぶものなので、ここでデプロイを止めた。ダッシュボードの Workers & Pages → Subdomain で変更できる。
+2. `SITE_URL` の更新と再デプロイ。サブドメインが決まってから `deploy.yml` の `env.SITE_URL` を実 URL にし、ビルドして再デプロイする。現在の本番は仮の `https://poteto-skills.example.workers.dev` で canonical・hreflang・`og:url`・`og:image` を出しており、CSP も `connect-src` 追加前のもの。`deploy` ジョブは仮の値のままでは失敗する。
+3. `wrangler rollback` による静的アセットの復元。2 つ目のバージョンを出して戻す検証は、上記の再デプロイと合わせて行う（手順は §9）。
+4. API トークンの必要最小権限。トークンが存在せず、作成もしていない。ユーザーが Workers Scripts: Edit だけのトークンを作り、[deploy.md](./deploy.md) のとおり GitHub Secrets に入れて `main` に push し、`deploy` ジョブが失敗したらエラーに出た権限を足して、ここに記録する。
+5. PR プレビュー（`wrangler versions upload` とコメント）。シークレットが入るまで実行されない。
