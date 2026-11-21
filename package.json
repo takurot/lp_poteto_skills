@@ -10,9 +10,11 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test \"tests/build/**/*.test.mjs\"",
-    "validate": "html-validate \"build/**/*.html\""
+    "validate": "html-validate \"build/**/*.html\"",
+    "e2e": "npm run build && playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "html-validate": "^11.21.1"
   }
 }
