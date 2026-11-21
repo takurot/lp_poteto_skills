@@ -11,9 +11,12 @@
     "build": "node scripts/build.mjs",
     "test": "node --test \"tests/build/**/*.test.mjs\"",
     "validate": "html-validate \"build/**/*.html\"",
-    "e2e": "npm run build && playwright test"
+    "e2e": "npm run build && playwright test",
+    "size": "node scripts/check-size.mjs build",
+    "lighthouse": "lhci autorun"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.16.1",
     "@playwright/test": "^1.65.1",
     "html-validate": "^11.21.1",
     "wrangler": "^4.166.0"

@@ -56,6 +56,7 @@ npm test                   # node --test: ビルド出力・content検査
 npm run build              # build/ を生成
 npx html-validate build/   # 出力HTMLのエラー0
 npx playwright test        # 360px / 1280px、リンク、言語切替、404、デザイン規則
+npm run size               # HTML+CSS の gzip 合計 < 50KB（SPEC §7）
 npx lhci autorun           # Lighthouse CI（SPEC §7 の閾値）
 ```
 
