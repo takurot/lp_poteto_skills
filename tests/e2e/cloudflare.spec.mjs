@@ -1,8 +1,10 @@
 // Runs against `wrangler dev`, which serves build/ with the real wrangler.jsonc and _headers (SPEC §5.4).
 import { expect, test } from "@playwright/test";
 
+// connect-src 'self' lets Lighthouse's robots-txt audit fetch /robots.txt from the page; the site itself
+// makes no fetches.
 const CSP =
-  "default-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+  "default-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
 const FONT = "/fonts/work-sans-latin-400-normal.woff2";
 
 const PAGES = [
@@ -39,6 +41,7 @@ for (const { path, status } of PAGES) {
     expect(headers["content-security-policy"]).toBe(CSP);
     expect(headers["x-content-type-options"]).toBe("nosniff");
     expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+    expect(headers["cross-origin-opener-policy"]).toBe("same-origin");
 
     await page.evaluate(() => document.fonts.ready);
     if (status === 200) {
