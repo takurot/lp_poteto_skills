@@ -160,6 +160,8 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
 {
   "name": "poteto-skills",
   "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "directory": "./build",
     "not_found_handling": "404-page",
@@ -179,18 +181,21 @@ Workers Static Assets を使う（Cloudflare は新規の静的サイトにこ�
 
 ```
 /*
-  Content-Security-Policy: default-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+  Cross-Origin-Opener-Policy: same-origin
 /*.css
   Cache-Control: public, max-age=3600
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 ```
 
+`connect-src 'self'` はサイト自身は使わないが、Lighthouse の robots-txt 監査がページ内から `/robots.txt` を fetch するため必要（`default-src 'none'` のままでは本番で SEO が 0.92 になった。2026-11-21）。`Cross-Origin-Opener-Policy: same-origin` はセキュリティレビューの提案で追加した。
+
 CSS のハッシュ付け（`style.<hash>.css`）は任意とする。ファイルが 1 つで小さいため、ハッシュなしの `style.css` に `max-age=3600` を付ける（`immutable` にすると更新後も古い CSS が最大 1 年残るため）。ハッシュ付けをするなら `scripts/build.mjs` で行い、HTML 内の参照も同時に生成する。HTML は Cloudflare のデフォルト（再検証）に任せる。
 
-ローカル確認: `npm run e2e` の `cloudflare` プロジェクトが `wrangler dev` で `build/` を配信し、`/`・`/ja/`・404 の CSP・nosniff・Referrer-Policy、CSP 違反とコンソールエラーが 0 件であること、フォントと CSS の Cache-Control、`/ja` → `/ja/` の 307、`.build-output`・`.assetsignore`・`_headers` が 404 になることを検査する。
+ローカル確認: `npm run e2e` の `cloudflare` プロジェクトが `wrangler dev` で `build/` を配信し、`/`・`/ja/`・404 の CSP・nosniff・Referrer-Policy・COOP、CSP 違反とコンソールエラーが 0 件であること、フォントと CSS の Cache-Control、`/ja` → `/ja/` の 307、`.build-output`・`.assetsignore`・`_headers` が 404 になることを検査する。
 
 ### 5.5 不採用とした代替案
 

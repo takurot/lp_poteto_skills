@@ -43,10 +43,16 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    environment: production
     concurrency:
       group: production-deploy
       cancel-in-progress: false
     steps:
+      - name: Refuse the placeholder SITE_URL
+        run: |
+          case "$SITE_URL" in
+            *.example.workers.dev) echo "::error::SITE_URL is still the placeholder $SITE_URL. Set the real workers.dev URL in deploy.yml."; exit 1 ;;
+          esac
       - id: secrets
         name: Check Cloudflare secrets
         env:
@@ -84,7 +90,11 @@ jobs:
 
   preview:
     needs: test
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    # Same-repository PRs only. Dependabot PRs are excluded so Cloudflare secrets never need to be Dependabot secrets.
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -125,7 +135,9 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
         run: |
+          set -o pipefail
           npx wrangler versions upload --message "PR #$PR_NUMBER at $HEAD_SHA" | tee "$RUNNER_TEMP/upload.log"
           url=$(grep -oE 'Version Preview URL: https://[^[:space:]]+' "$RUNNER_TEMP/upload.log" | head -n 1 | cut -d' ' -f4)
           echo "url=$url" >> "$GITHUB_OUTPUT"
@@ -140,7 +152,16 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PREVIEW_URL: ${{ steps.upload.outputs.url }}
+        # One comment per PR, found by its marker, so other bot comments are never overwritten.
         run: |
-          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none \
-            --body "Preview for $HEAD_SHA: $PREVIEW_URL"
+          marker="<!-- preview-url -->"
+          body="$marker
+          Preview for $HEAD_SHA: $PREVIEW_URL"
+          id=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+            --jq "map(select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\")))) | .[0].id // empty" | head -n 1)
+          if [ -n "$id" ]; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$body" > /dev/null
+          else
+            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" -f body="$body" > /dev/null
+          fi
           echo "Preview: $PREVIEW_URL" >> "$GITHUB_STEP_SUMMARY"

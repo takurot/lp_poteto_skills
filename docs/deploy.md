@@ -10,7 +10,14 @@
 
 ## GitHub Secrets の設定
 
-リポジトリの Settings → Secrets and variables → Actions に、次の 2 つを Repository secret として追加する。
+`deploy` ジョブは GitHub Environment `production` で動く（初回実行時に自動で作られる）。次の 2 つの置き場所のどちらかを選ぶ。
+
+- **本番だけ（推奨）**: Settings → Environments → `production` で Deployment branches を `main` に限り、そこに Environment secret として追加する。`main` 以外のブランチのワークフローからトークンは読めない。PR プレビューはシークレットがないため警告を出してスキップする。
+- **本番と PR プレビュー**: Settings → Secrets and variables → Actions に Repository secret として追加する。プレビューには同じトークンが渡るため、push 権限を持つ人はブランチのワークフローを書き換えて本番にデプロイできる。`versions upload` にも Workers Scripts: Edit が必要なので、プレビュー専用トークンに分けても防げない。共同作業者が増えたら本番だけに切り替える。
+
+Dependabot の PR ではプレビューを動かさない。Cloudflare のシークレットを Dependabot secrets に追加しない。
+
+名前と値:
 
 | 名前 | 値 |
 |---|---|
@@ -37,7 +44,7 @@ SITE_URL=https://poteto-skills.<subdomain>.workers.dev npm run build
 npx wrangler deploy
 ```
 
-`SITE_URL` はワークフローの `env` と同じ値にする。canonical・hreflang・`og:url`・`og:image` の絶対 URL はこの値から作る。
+`SITE_URL` はワークフローの `env` と同じ値にする。`deploy` ジョブは `SITE_URL` が仮の `*.example.workers.dev` のままなら失敗する。canonical・hreflang・`og:url`・`og:image` の絶対 URL はこの値から作る。
 
 ## ロールバック
 
