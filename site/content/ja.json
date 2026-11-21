@@ -4,7 +4,8 @@
     "description": "Cursor 公式プラグイン集 cursor/plugins の Skills を、Claude Code と Codex で読み込める形式に変換した配布物です。pstack 0.15.46 を含みます。",
     "og": {
       "title": "pstack for Codex | poteto-skills",
-      "description": "cursor/plugins の Skills を Claude Code と Codex 向けに変換した配布物です。"
+      "description": "cursor/plugins の Skills を Claude Code と Codex 向けに変換した配布物です。",
+      "imageAlt": "POTETO-SKILLS のワードマーク、見出し「pstack for Codex」、一文「Skills for Claude Code & Codex」。"
     }
   },
   "header": {

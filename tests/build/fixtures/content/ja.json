@@ -4,7 +4,8 @@
     "description": "Fixture description JA.",
     "og": {
       "title": "Fixture OG title JA",
-      "description": "Fixture OG description JA."
+      "description": "Fixture OG description JA.",
+      "imageAlt": "Fixture OG image alt JA"
     }
   },
   "header": {

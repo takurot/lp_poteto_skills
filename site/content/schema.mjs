@@ -7,7 +7,7 @@ export const schema = obj({
   meta: obj({
     title: str(),
     description: str(160),
-    og: obj({ title: str(), description: str() }),
+    og: obj({ title: str(), description: str(), imageAlt: str() }),
   }),
   header: obj({ wordmark: str(), navLabel: str(), languageSwitchLabel: str(), githubLabel: str() }),
   hero: obj({ overline: str(), heading: str(), lead: str(), ctaLabel: str() }),

@@ -81,6 +81,28 @@ test("build bookkeeping files are not served", async ({ request }) => {
   }
 });
 
+test("og.png and favicon.svg are served with image content types", async ({ request }) => {
+  for (const [path, type] of [
+    ["/og.png", "image/png"],
+    ["/favicon.svg", "image/svg+xml"],
+  ]) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(200);
+    expect(response.headers()["content-type"], path).toBe(type);
+  }
+});
+
+for (const { path } of PAGES) {
+  test(`${path}: the icon link and og:image resolve to served images`, async ({ page, request }) => {
+    await page.goto(path);
+    const icon = await page.locator('link[rel="icon"]').evaluate((link) => link.href);
+    expect((await request.get(icon)).status(), icon).toBe(200);
+    if (path === "/no-such-page") return;
+    const ogImage = new URL(await page.locator('meta[property="og:image"]').getAttribute("content"));
+    expect((await request.get(ogImage.pathname)).status(), ogImage.pathname).toBe(200);
+  });
+}
+
 test("robots.txt allows crawling", async ({ request }) => {
   const response = await request.get("/robots.txt");
   expect(response.status()).toBe(200);

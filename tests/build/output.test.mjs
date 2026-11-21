@@ -83,6 +83,9 @@ describe("built locale pages", () => {
         assert.equal(metaContent(html, "og:description"), content.meta.og.description);
         assert.equal(metaContent(html, "og:url"), page.url);
         assert.equal(metaContent(html, "og:image"), `${TEST_SITE_URL}/og.png`);
+        assert.equal(metaContent(html, "og:image:width"), "1200");
+        assert.equal(metaContent(html, "og:image:height"), "630");
+        assert.equal(metaContent(html, "og:image:alt"), content.meta.og.imageAlt);
         assert.equal(metaContent(html, "og:type"), "website");
         assert.equal(metaContent(html, "twitter:card"), "summary_large_image");
       });
