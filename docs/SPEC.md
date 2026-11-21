@@ -289,6 +289,8 @@ Phase 4 で確認済み（2026-11-21、#20）:
 2. 画像の中身。黒 `#0A0A0A` の地に `#FAFAFA` の Archivo Black でワードマーク `POTETO-SKILLS` と見出し `pstack for Codex`（2 行に折り返す）、赤 `#EF4444` の横棒 1 本（192×12px）、Work Sans 500 で `Skills for Claude Code & Codex`。画素を数えると、彩度のある画素は 2304 個（192×12）ですべて横棒の範囲にあり、色は `#EF4444` だけだった。文字の切れはない。
 3. 配信。`wrangler dev` 上で `/og.png` が 200 `image/png`、`/favicon.svg` が 200 `image/svg+xml`。`/`・`/ja/`・404 の `<link rel="icon">` と、`/`・`/ja/` の `og:image` のパスがどちらも 200（E2E）。HTML+CSS の gzip 合計は 9514 バイト。
 
+Phase 4 のデプロイ確認（2026-11-21）。`main` の `81797e3` からビルドして `wrangler deploy` を実行し、バージョンは `95773df0-b192-4f39-bf97-b50134bfb0c6`。本番で `/`・`/ja/` が 200、`/og.png` が 200 `image/png`（38826 バイトで、ビルドしたファイルとハッシュが一致）、`/favicon.svg` が 200 `image/svg+xml`、未知のパスが 404。`/` の HTML に `<link rel="icon">`、`og:image`（絶対 URL）、`og:image:width`・`height`・`alt` が出ている。これで `og:image` の 404 は解消した。
+
 Phase 4 の受け入れ確認（2026-11-21、#21）。結果は `main` の `c4aadca` に #20、#21 の変更を載せたビルドで取った。
 
 1. 文言の推敲。上流の `README.md`・`README_JP.md`・`skills/manifest.json`・`marketplace.json` と全文を突き合わせた。数値、コマンド、フラグ、プラグイン名、ライセンス表記に誤りはなかった。直したのは、README が言っていないことを言っていた 3 点（既定のインストールを「全 Skill」とした、Canvas のフォールバックを実行時の動作として書いた、codex-hooks の有効化手順が抜けていた）と、日本語の言い回し（「Skills」と「Skill」の混在、「upstream」と「上流」の混在、リード文）。`og:title` は Hero 見出しに合わせたままにした。`meta.description` は英語 136 字、日本語 101 字。
@@ -301,7 +303,6 @@ Phase 4 でも未確認の項目:
 
 1. 対応ブラウザ（Safari、Firefox、Edge）での表示。Chromium だけで検査している。
 2. 日本語文言のネイティブによる確認。上流 README_JP との突き合わせと機械的な検査まで。
-3. 本番で `og:image` が 200 を返すこと。PR #50 のデプロイ後に確認する。
 
 Phase 4 で未確認:
 
