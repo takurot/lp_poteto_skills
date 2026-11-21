@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "title": "Fixture title EN",
+    "description": "Fixture description EN.",
+    "og": {
+      "title": "Fixture OG title EN",
+      "description": "Fixture OG description EN."
+    }
+  },
+  "header": {
+    "wordmark": "FIXTURE-WORDMARK",
+    "languageSwitchLabel": "Fixture Japanese",
+    "githubLabel": "Fixture GitHub EN"
+  },
+  "hero": {
+    "overline": "FIXTURE OVERLINE EN",
+    "heading": "Fixture heading EN",
+    "lead": "Fixture lead EN.",
+    "ctaLabel": "Fixture CTA EN"
+  },
+  "numbers": [
+    { "value": "1", "label": "Fixture number one EN" },
+    { "value": "2", "label": "Fixture number two EN" },
+    { "value": "3", "label": "Fixture number three EN" },
+    { "value": "4.0.0", "label": "Fixture number four EN" }
+  ],
+  "install": {
+    "heading": "Fixture install EN",
+    "intro": "Fixture install intro EN.",
+    "commands": ["fixture-install --one", "fixture-install --two"],
+    "optionNotes": ["Fixture option note one EN.", "Fixture option note two EN."]
+  },
+  "codex": {
+    "heading": "Fixture codex EN",
+    "intro": "Fixture codex intro EN.",
+    "commands": ["fixture-codex add", "fixture-codex list"],
+    "plugins": ["fixture-plugin-a", "fixture-plugin-b"],
+    "codexHooksNote": "Fixture hooks note EN."
+  },
+  "converts": {
+    "heading": "Fixture converts EN",
+    "rows": [
+      { "from": "Fixture from one EN", "to": "Fixture to one EN" },
+      { "from": "Fixture from two EN", "to": "Fixture to two EN" }
+    ]
+  },
+  "boundaries": {
+    "heading": "Fixture boundaries EN",
+    "items": ["Fixture boundary one EN.", "Fixture boundary two EN.", "Fixture boundary three EN.", "Fixture boundary four EN."]
+  },
+  "pullQuote": "Fixture pull quote EN.",
+  "footer": {
+    "license": "Fixture license EN.",
+    "credits": "Fixture credits EN.",
+    "copyrightHolders": "Fixture holders EN.",
+    "githubLabel": "Fixture footer GitHub EN"
+  },
+  "notFound": {
+    "title": "Fixture not found EN",
+    "message": "Fixture not found message EN.",
+    "linkLabel": "Fixture back home EN"
+  }
+}
